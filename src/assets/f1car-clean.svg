@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 420" width="1200" height="420" role="img" aria-labelledby="title desc">
+  <title id="title">Formula style racing car</title>
+  <desc id="desc">Side profile racing car illustration with separate front and rear wheel groups.</desc>
+
+  <defs>
+    <linearGradient id="bodyRed" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ff4a3d"/>
+      <stop offset="55%" stop-color="#d91024"/>
+      <stop offset="100%" stop-color="#8f0716"/>
+    </linearGradient>
+    <linearGradient id="carbon" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#2f3136"/>
+      <stop offset="100%" stop-color="#121317"/>
+    </linearGradient>
+    <linearGradient id="glass" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#9ad7ff" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#334357" stop-opacity="0.35"/>
+    </linearGradient>
+  </defs>
+
+  <g id="car" transform="translate(30 20)">
+    <path fill="#0f1115" d="M57 318h1062c17 0 31 14 31 31v12H26v-12c0-17 14-31 31-31z"/>
+
+    <path fill="url(#bodyRed)" d="M125 286c65-29 143-54 240-65 121-14 247-15 393-11 84 2 168 0 245-13 94-16 160-40 211-70h81c-19 38-48 74-89 108-40 33-93 62-163 85-98 33-233 51-402 56-187 5-343-16-516-67z"/>
+    <path fill="url(#carbon)" d="M338 243h368c31 0 61 9 84 26l74 56h-529l3-19c4-32 29-57 61-63h-61z"/>
+
+    <path fill="#191c23" d="M586 168c49-1 98 8 137 26l81 39c20 9 30 31 25 52l-1 3H535l9-56c6-37 19-61 42-64z"/>
+    <path fill="url(#glass)" d="M596 179c37 1 75 8 108 21l58 28c7 3 11 11 9 19l-2 10H575l7-44c2-20 8-34 14-34z"/>
+
+    <path fill="#0f1115" d="M829 247h130l58-16-34 45h-138z"/>
+    <path fill="#1a1d24" d="M1014 197h108l42-78h43l-14 66-36 60-141 40z"/>
+    <path fill="url(#bodyRed)" d="M1016 188h98l18-41h31l-11 49-20 35-102 28z"/>
+
+    <path fill="#0d1015" d="M178 248h150l-25 31h-182c6-10 16-21 30-31h27z"/>
+    <path fill="#0d1015" d="M206 171h62l20 76h-39l-12-49h-45z"/>
+    <path fill="url(#bodyRed)" d="M177 236h130l-26 32H152l25-32z"/>
+
+    <path fill="#10131a" d="M454 164h58v62h-58z"/>
+    <path fill="#10131a" d="M894 166h42v77h-42z"/>
+
+    <rect x="379" y="289" width="76" height="17" rx="8.5" fill="#161920"/>
+    <rect x="813" y="287" width="76" height="17" rx="8.5" fill="#161920"/>
+
+    <g id="rearWheel" transform="translate(330 300)">
+      <circle r="72" fill="#0d0f14"/>
+      <circle r="53" fill="#1d2129"/>
+      <circle r="32" fill="#8f95a3"/>
+      <circle r="9" fill="#c7ccd7"/>
+      <g fill="#5f6573">
+        <rect x="-4" y="-30" width="8" height="18" rx="3"/>
+        <rect x="-4" y="12" width="8" height="18" rx="3"/>
+        <rect x="-30" y="-4" width="18" height="8" rx="3"/>
+        <rect x="12" y="-4" width="18" height="8" rx="3"/>
+        <rect x="-23" y="-23" width="12" height="8" rx="3" transform="rotate(-45)"/>
+        <rect x="11" y="15" width="12" height="8" rx="3" transform="rotate(-45)"/>
+        <rect x="-23" y="15" width="12" height="8" rx="3" transform="rotate(45)"/>
+        <rect x="11" y="-23" width="12" height="8" rx="3" transform="rotate(45)"/>
+      </g>
+    </g>
+
+    <g id="frontWheel" transform="translate(925 300)">
+      <circle r="72" fill="#0d0f14"/>
+      <circle r="53" fill="#1d2129"/>
+      <circle r="32" fill="#8f95a3"/>
+      <circle r="9" fill="#c7ccd7"/>
+      <g fill="#5f6573">
+        <rect x="-4" y="-30" width="8" height="18" rx="3"/>
+        <rect x="-4" y="12" width="8" height="18" rx="3"/>
+        <rect x="-30" y="-4" width="18" height="8" rx="3"/>
+        <rect x="12" y="-4" width="18" height="8" rx="3"/>
+        <rect x="-23" y="-23" width="12" height="8" rx="3" transform="rotate(-45)"/>
+        <rect x="11" y="15" width="12" height="8" rx="3" transform="rotate(-45)"/>
+        <rect x="-23" y="15" width="12" height="8" rx="3" transform="rotate(45)"/>
+        <rect x="11" y="-23" width="12" height="8" rx="3" transform="rotate(45)"/>
+      </g>
+    </g>
+
+    <path fill="#0f1115" d="M111 287h183c17 0 31 14 31 31v12H85v-10c0-18 12-33 26-33z"/>
+    <path fill="#0f1115" d="M758 286h204c18 0 33 15 33 33v10H718v-12c0-17 14-31 31-31h9z"/>
+
+    <path fill="#ffffff" fill-opacity="0.2" d="M246 257c107-35 232-53 376-53 117 0 228-4 332-35-31 24-72 45-129 62-84 24-195 36-340 37-94 0-178-4-239-11z"/>
+    <path fill="#f4f5f8" fill-opacity="0.55" d="M243 257l64 0-15 15h-60z"/>
+    <path fill="#f4f5f8" fill-opacity="0.55" d="M995 218l36-8-8 14-35 10z"/>
+  </g>
+</svg>
