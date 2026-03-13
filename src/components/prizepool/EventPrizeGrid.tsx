@@ -1,14 +1,18 @@
 import { motion } from "framer-motion";
+import trophy from "../../public/images/trophy.jpg";
+import track from "../../public/images/f1-track.jpg";
+import garage from "../../public/images/garage.jpg";
+import podium from "../../public/images/f1-podium.jpg";
 
 type EventPrizeGridProps = {
   raceFinished: boolean;
 };
 
 const eventPrizes = [
-  { name: "AI Challenge", amount: "$20,000" },
-  { name: "Web Development", amount: "$15,000" },
-  { name: "Blockchain Track", amount: "$12,500" },
-  { name: "Robotics Event", amount: "$10,000" },
+  { name: "AI Challenge", amount: "$20,000", image: trophy },
+  { name: "Web Development", amount: "$15,000", image: track },
+  { name: "Blockchain Track", amount: "$12,500", image: garage },
+  { name: "Robotics Event", amount: "$10,000", image: podium },
 ];
 
 export default function EventPrizeGrid({ raceFinished }: EventPrizeGridProps) {
@@ -32,20 +36,23 @@ export default function EventPrizeGrid({ raceFinished }: EventPrizeGridProps) {
         {eventPrizes.map((event, index) => (
           <motion.article
             key={event.name}
-            className="rounded-2xl border border-zinc-700/70 bg-[linear-gradient(170deg,#13161d,#0a0b0f)] p-5 shadow-[0_14px_30px_rgba(0,0,0,0.35)]"
+            className="relative overflow-hidden rounded-2xl border border-zinc-700/70 bg-[linear-gradient(170deg,#13161d,#0a0b0f)] p-5 shadow-[0_14px_30px_rgba(0,0,0,0.35)]"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.45, delay: index * 0.06 }}
             viewport={{ once: true, amount: 0.45 }}
             whileHover={{ y: -6, scale: 1.02 }}
-            animate={
-              raceFinished ? { borderColor: "rgba(239,68,68,0.45)" } : {}
-            }
           >
-            <p className="text-xs uppercase tracking-wide text-zinc-400">
+            <img
+              src={event.image}
+              className="absolute inset-0 h-full w-full object-cover opacity-10"
+            />
+
+            <p className="relative text-xs uppercase tracking-wide text-zinc-400">
               {event.name}
             </p>
-            <p className="mt-3 text-2xl font-black text-white">
+
+            <p className="relative mt-3 text-2xl font-black text-white">
               {event.amount}
             </p>
           </motion.article>
