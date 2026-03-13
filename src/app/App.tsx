@@ -104,7 +104,9 @@ function App() {
           </section>
         )}
 
-        <PrizePoolExperience />
+        <div id="prizepool">
+          <PrizePoolExperience />
+        </div>
 
         {showSponsorForm && (
           <>

@@ -602,15 +602,15 @@ export const ThreeHero = ({ onFaqClick, onSponsorClick }: ThreeHeroProps) => {
         className={`transition-opacity duration-[2000ms] ${started ? "opacity-100" : "opacity-0"}`}
       >
 
-        {/* Nav Bar — Premium Glassmorphic Design */}
+        {/* Nav Bar — Light & Transparent */}
         <nav className="absolute top-0 z-50 w-full px-4 pt-3 sm:px-8 sm:pt-4 lg:px-12 lg:pt-5">
           <div
-            className="mx-auto flex items-center justify-between gap-3 rounded-2xl border border-white/[0.06] px-5 py-3 sm:px-8 sm:py-4"
+            className="mx-auto flex items-center justify-between gap-3 rounded-2xl border border-white/[0.04] px-5 py-3 sm:px-8 sm:py-4"
             style={{
-              background: "linear-gradient(135deg, rgba(0,0,0,0.7), rgba(20,0,0,0.6))",
-              backdropFilter: "blur(18px) saturate(1.3)",
-              WebkitBackdropFilter: "blur(18px) saturate(1.3)",
-              boxShadow: "0 8px 32px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.04), 0 0 0 1px rgba(220,38,38,0.08)",
+              background: "rgba(0,0,0,0.15)",
+              backdropFilter: "blur(8px) saturate(1.1)",
+              WebkitBackdropFilter: "blur(8px) saturate(1.1)",
+              boxShadow: "inset 0 1px 0 rgba(255,255,255,0.03)",
             }}
           >
             {/* Logo */}
@@ -628,49 +628,34 @@ export const ThreeHero = ({ onFaqClick, onSponsorClick }: ThreeHeroProps) => {
               <span
                 className="absolute -bottom-1 left-0 h-[2px] w-full"
                 style={{
-                  background: "linear-gradient(90deg, transparent, rgba(255,0,0,0.5), transparent)",
+                  background: "linear-gradient(90deg, transparent, rgba(255,0,0,0.4), transparent)",
                 }}
               />
             </a>
 
             {/* Desktop nav links */}
-            <div className="hidden md:flex items-center gap-1 lg:gap-2">
+            <div className="hidden md:flex items-center gap-2 lg:gap-3">
               {[
-                { label: "Events", href: "#circuit-roadmap" },
-                { label: "Sponsors", href: "#testimonial-garage" },
-                { label: "Team", href: "#team" },
-                { label: "Gallery", href: "#gallery" },
+                { label: "Prize Pool", href: "#prizepool" },
+                { label: "Testimonial", href: "#testimonial-garage" },
               ].map((item) => (
                 <a
                   key={item.label}
                   href={item.href}
-                  className="group relative px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.18em] text-white/70 transition-all duration-300 hover:text-white lg:px-4 lg:text-xs"
+                  className="group relative px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.18em] text-white/60 transition-all duration-300 hover:text-white lg:px-4 lg:text-xs"
                 >
                   {item.label}
                   <span className="absolute bottom-0 left-1/2 h-[2px] w-0 -translate-x-1/2 bg-gradient-to-r from-red-600 to-red-400 transition-all duration-300 group-hover:w-3/4" />
                 </a>
               ))}
 
-              <div className="ml-2 flex items-center gap-2 lg:ml-4">
-                <button
-                  type="button"
-                  onClick={onFaqClick}
-                  className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-1.5 text-[10px] font-bold uppercase tracking-[0.18em] text-white/80 transition-all duration-300 hover:border-white/20 hover:bg-white/[0.08] hover:text-white lg:text-xs"
-                >
-                  FAQ
-                </button>
-                <button
-                  type="button"
-                  onClick={onSponsorClick}
-                  className="rounded-full border border-red-500/40 px-4 py-1.5 text-[10px] font-bold uppercase tracking-[0.18em] text-white transition-all duration-300 lg:text-xs"
-                  style={{
-                    background: "linear-gradient(135deg, rgba(220,38,38,0.8), rgba(185,28,28,0.9))",
-                    boxShadow: "0 0 16px rgba(220,38,38,0.25), inset 0 1px 0 rgba(255,255,255,0.1)",
-                  }}
-                >
-                  Sponsor Us
-                </button>
-              </div>
+              <button
+                type="button"
+                onClick={onFaqClick}
+                className="rounded-full border border-white/[0.08] bg-white/[0.03] px-4 py-1.5 text-[10px] font-bold uppercase tracking-[0.18em] text-white/60 transition-all duration-300 hover:border-white/15 hover:bg-white/[0.06] hover:text-white lg:text-xs"
+              >
+                FAQ
+              </button>
             </div>
 
             {/* Mobile buttons */}
@@ -678,25 +663,15 @@ export const ThreeHero = ({ onFaqClick, onSponsorClick }: ThreeHeroProps) => {
               <button
                 type="button"
                 onClick={onFaqClick}
-                className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.1em] text-white/80 transition active:scale-[0.97]"
+                className="rounded-full border border-white/[0.08] bg-white/[0.03] px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.1em] text-white/60 transition active:scale-[0.97]"
               >
                 FAQ
               </button>
               <button
                 type="button"
-                onClick={onSponsorClick}
-                className="rounded-full border border-red-500/40 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.1em] text-white transition active:scale-[0.97]"
-                style={{
-                  background: "linear-gradient(135deg, rgba(220,38,38,0.8), rgba(185,28,28,0.9))",
-                }}
-              >
-                Sponsor
-              </button>
-              <button
-                type="button"
                 aria-label="Toggle navigation menu"
                 onClick={() => setMobileMenuOpen((prev) => !prev)}
-                className="rounded-xl border border-white/10 bg-white/[0.04] p-2 text-zinc-100 transition active:scale-[0.96]"
+                className="rounded-xl border border-white/[0.06] bg-white/[0.03] p-2 text-zinc-200 transition active:scale-[0.96]"
               >
                 {mobileMenuOpen ? <X size={16} /> : <Menu size={16} />}
               </button>
@@ -706,25 +681,23 @@ export const ThreeHero = ({ onFaqClick, onSponsorClick }: ThreeHeroProps) => {
           {/* Mobile menu dropdown */}
           {mobileMenuOpen && (
             <div
-              className="mx-auto mt-2 rounded-xl border border-white/[0.06] p-3 md:hidden"
+              className="mx-auto mt-2 rounded-xl border border-white/[0.04] p-3 md:hidden"
               style={{
-                background: "linear-gradient(135deg, rgba(0,0,0,0.85), rgba(20,0,0,0.8))",
-                backdropFilter: "blur(18px)",
-                WebkitBackdropFilter: "blur(18px)",
+                background: "rgba(0,0,0,0.3)",
+                backdropFilter: "blur(12px)",
+                WebkitBackdropFilter: "blur(12px)",
               }}
             >
               <div className="grid grid-cols-2 gap-2">
                 {[
-                  { label: "Events", href: "#circuit-roadmap" },
-                  { label: "Sponsors", href: "#testimonial-garage" },
-                  { label: "Team", href: "#team" },
-                  { label: "Gallery", href: "#gallery" },
+                  { label: "Prize Pool", href: "#prizepool" },
+                  { label: "Testimonial", href: "#testimonial-garage" },
                 ].map((item) => (
                   <a
                     key={item.label}
                     href={item.href}
                     onClick={() => setMobileMenuOpen(false)}
-                    className="rounded-lg border border-white/[0.06] bg-white/[0.03] px-3 py-2.5 text-center text-xs font-bold uppercase tracking-[0.12em] text-zinc-100 transition active:scale-[0.97]"
+                    className="rounded-lg border border-white/[0.04] bg-white/[0.03] px-3 py-2.5 text-center text-xs font-bold uppercase tracking-[0.12em] text-zinc-200 transition active:scale-[0.97]"
                   >
                     {item.label}
                   </a>
