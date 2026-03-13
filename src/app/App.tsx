@@ -6,7 +6,7 @@ import "../styles/fonts.css";
 import { ThreeHero } from "./components/ThreeHero";
 import { EventsTimeline } from "./components/EventsTimeline";
 import { Tracks } from "./components/Tracks";
-import { RacingJourney } from "./components/RacingJourney";
+// import { RacingJourney } from "./components/RacingJourney";
 import { SponsorshipRequest } from "./components/SponsorshipRequest";
 import { FAQ } from "./components/FAQ";
 import TestimonialSection from "../components/TestimonialSection";
@@ -86,7 +86,7 @@ function App() {
         <Separator />
         <Tracks />
 
-        <RacingJourney />
+        {/* <RacingJourney /> */}
 
         <Separator />
 

@@ -22,7 +22,7 @@ export const EventsTimeline: React.FC = () => {
   // 1. Hook into the page scroll for this specific section over its native height
   const { scrollYProgress } = useScroll({
     target: scrollRef,
-    offset: ["start 80%", "end 20%"] // Starts animating when top hits 80% screen, finishes when bottom hits 20%
+    offset: ["start 5%", "end 94%"] // Starts animating when top hits 80% screen, finishes when bottom hits 20%
   });
 
   // 2. Smooth the movement for a high-end feel
@@ -106,7 +106,7 @@ export const EventsTimeline: React.FC = () => {
                   {/* HIGH VISIBILITY LABELS BELOW TRACK */}
                   <div className="absolute -bottom-24 md:-bottom-[104px] whitespace-nowrap text-center pointer-events-none">
                     <p className={`font-orbitron text-[10px] md:text-sm font-black uppercase tracking-widest transition-colors duration-300 ${isActive ? 'text-red-500 drop-shadow-[0_2px_10px_rgba(239,68,68,0.8)] scale-110' : 'text-zinc-400'}`}>
-                      {event.title}
+                      { }
                     </p>
                     <p className={`text-[9px] md:text-[10px] font-mono font-bold tracking-[0.2em] mt-1 transition-colors ${isActive ? 'text-white' : 'text-zinc-600'}`}>
                       {event.date}
