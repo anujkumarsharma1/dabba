@@ -189,7 +189,7 @@ export const ThreeHero = ({ onFaqClick, onSponsorClick }: ThreeHeroProps) => {
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.outputColorSpace = THREE.SRGBColorSpace;
-    renderer.setClearColor(0x000000, 1);  // Black background but alpha enabled for layering
+    renderer.setClearColor(0x000000, 0);  // Black background but alpha enabled for layering
     renderer.toneMapping = THREE.ACESFilmicToneMapping;  // Realistic tone mapping
     renderer.toneMappingExposure = 1.0;  // Natural exposure
 
@@ -274,10 +274,10 @@ export const ThreeHero = ({ onFaqClick, onSponsorClick }: ThreeHeroProps) => {
       MODEL_URL,
       (g) => {
         carModel = g.scene;
-        
+
         // Perfect scale for viewing
         carModel.scale.set(1.4, 1.4, 1.4);
-        
+
         // Apply realistic materials and shadows for F1 car
         carModel.traverse((n) => {
           if ((n as THREE.Mesh).isMesh) {
@@ -301,7 +301,7 @@ export const ThreeHero = ({ onFaqClick, onSponsorClick }: ThreeHeroProps) => {
         carModel.position.sub(center);
         carModel.position.y = 0.15;  // Raised up
         carModel.position.z = -1;     // Behind the particle text
-        
+
         scene.add(carModel);
       },
       (progress) => {
@@ -318,14 +318,14 @@ export const ThreeHero = ({ onFaqClick, onSponsorClick }: ThreeHeroProps) => {
     const animate = () => {
       requestAnimationFrame(animate);
       time += 0.01;
-      
+
       // Smooth rotation animation for the car
       if (carModel) {
         carModel.rotation.y += 0.005;
         // Add subtle floating animation at raised position
         carModel.position.y = 0.15 + Math.sin(time * 0.8) * 0.04;
       }
-      
+
       renderer.render(scene, camera);
     };
     animate();
