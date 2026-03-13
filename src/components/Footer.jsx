@@ -3,14 +3,14 @@ import helmetImage from "../assets/helmet.svg";
 import contourSvg from "../assets/contour.svg";
 
 const navLinks = [
-  { label: "HOME", href: "#" },
-  { label: "ABOUT US", href: "#" },
-  { label: "TIMELINE", href: "#" },
+  { label: "HOME", href: "#hero" },
+  { label: "ABOUT US", href: "#testimonial-garage" },
+  { label: "TIMELINE", href: "#circuit-roadmap" },
 ];
 
 const socialLinks = [
-  { label: "INSTAGRAM", href: "#" },
-  { label: "LINKED IN", href: "#" },
+  { label: "INSTAGRAM", href: "https://www.instagram.com/aittechnicalboard/", external: true },
+  { label: "LINKED IN", href: "https://www.linkedin.com/company/ait-technical-board/posts/?feedView=all", external: true },
 ];
 
 const Footer = () => {
@@ -173,6 +173,8 @@ const Footer = () => {
                     <a
                       key={`mobile-social-${item.label}`}
                       href={item.href}
+                      target={item.external ? "_blank" : undefined}
+                      rel={item.external ? "noopener noreferrer" : undefined}
                       className="block text-base uppercase tracking-[0.03em] text-white transition hover:text-[#74ff8b]"
                       style={{ fontFamily: "Oswald", fontWeight: 700 }}
                     >
@@ -197,6 +199,8 @@ const Footer = () => {
               <a
                 key={item.label}
                 href={item.href}
+                target={item.external ? "_blank" : undefined}
+                rel={item.external ? "noopener noreferrer" : undefined}
                 className="text-[1.85rem] leading-[1.1] tracking-[0.05em] text-white transition-all duration-300 hover:text-[#74ff8b] hover:tracking-[0.08em]"
                 style={{
                   fontFamily: "Oswald",

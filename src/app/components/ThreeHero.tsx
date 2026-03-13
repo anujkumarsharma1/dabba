@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { Renderer, Program, Triangle, Mesh } from "ogl";
@@ -17,10 +17,14 @@ export const ThreeHero = ({ onFaqClick, onSponsorClick }: ThreeHeroProps) => {
   const [progress, setProgress] = useState(0);
   const [started, setStarted] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mouseOnText, setMouseOnText] = useState(false);
+  const [rpmValue, setRpmValue] = useState(0);
+  const [glitchActive, setGlitchActive] = useState(false);
 
   const mountRef = useRef<HTMLDivElement>(null);
   const raysRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLDivElement>(null);
+  const sparksCanvasRef = useRef<HTMLCanvasElement>(null);
 
   // ==========================================
   // 1. PRELOADER & START LOGIC
@@ -47,7 +51,100 @@ export const ThreeHero = ({ onFaqClick, onSponsorClick }: ThreeHeroProps) => {
       if (window.innerWidth >= 768) {
         initParticleText("SOLUTIONS 2K26");
       }
+      initSparks();
+      startRpmAnimation();
+      startGlitchLoop();
     }, 500);
+  };
+
+  // ==========================================
+  // 2b. RPM GAUGE ANIMATION
+  // ==========================================
+  const startRpmAnimation = () => {
+    let rpm = 0;
+    let direction = 1;
+    const tick = () => {
+      rpm += direction * (Math.random() * 400 + 100);
+      if (rpm >= 18000) { rpm = 18000; direction = -1; }
+      if (rpm <= 3000) { rpm = 3000; direction = 1; }
+      setRpmValue(Math.round(rpm));
+      setTimeout(tick, 60 + Math.random() * 80);
+    };
+    tick();
+  };
+
+  // ==========================================
+  // 2c. GLITCH LOOP
+  // ==========================================
+  const startGlitchLoop = () => {
+    const loop = () => {
+      setGlitchActive(true);
+      setTimeout(() => setGlitchActive(false), 150 + Math.random() * 100);
+      setTimeout(loop, 3000 + Math.random() * 4000);
+    };
+    setTimeout(loop, 2000);
+  };
+
+  // ==========================================
+  // 2d. SPARKS CANVAS
+  // ==========================================
+  const initSparks = () => {
+    const canvas = sparksCanvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    window.addEventListener("resize", () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+
+    type Spark = { x: number; y: number; vx: number; vy: number; life: number; maxLife: number; size: number; color: string };
+    const sparks: Spark[] = [];
+
+    const spawn = () => {
+      const count = 1 + Math.floor(Math.random() * 3);
+      for (let i = 0; i < count; i++) {
+        sparks.push({
+          x: canvas.width * (0.3 + Math.random() * 0.4),
+          y: canvas.height * (0.35 + Math.random() * 0.3),
+          vx: (Math.random() - 0.5) * 4,
+          vy: -1 - Math.random() * 3,
+          life: 0,
+          maxLife: 40 + Math.random() * 40,
+          size: 1 + Math.random() * 2,
+          color: Math.random() > 0.5 ? "#ff4444" : "#ffaa22",
+        });
+      }
+    };
+
+    const loop = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      if (Math.random() > 0.85) spawn();
+
+      for (let i = sparks.length - 1; i >= 0; i--) {
+        const s = sparks[i];
+        s.x += s.vx;
+        s.y += s.vy;
+        s.vy += 0.08; // gravity
+        s.life++;
+        const alpha = 1 - s.life / s.maxLife;
+        if (alpha <= 0) { sparks.splice(i, 1); continue; }
+        ctx.globalAlpha = alpha;
+        ctx.fillStyle = s.color;
+        ctx.shadowColor = s.color;
+        ctx.shadowBlur = 6;
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+      ctx.shadowBlur = 0;
+      requestAnimationFrame(loop);
+    };
+    loop();
   };
 
   // ==========================================
@@ -80,12 +177,12 @@ export const ThreeHero = ({ onFaqClick, onSponsorClick }: ThreeHeroProps) => {
       expireAt: number;
 
       constructor(x: number, y: number) {
-        this.lifeTime = 2000;
+        this.lifeTime = 3000;  // longer life for blossom effect
         this.expireAt = Date.now() + this.lifeTime;
         this.current = [x, y];
         this.destination = [
-          x + (Math.random() - 0.5) * 30,
-          y + (Math.random() - 0.5) * 30,
+          x + (Math.random() - 0.5) * 40,  // wider spread — flower blossom
+          y + (Math.random() - 0.5) * 40,
         ];
       }
       paint(context: CanvasRenderingContext2D) {
@@ -108,9 +205,9 @@ export const ThreeHero = ({ onFaqClick, onSponsorClick }: ThreeHeroProps) => {
         this.y = row * CELL_DISTANCE;
       }
       paint(context: CanvasRenderingContext2D) {
-        if (Math.random() > 0.985)
+        if (Math.random() > 0.96)  // more particles for dense blossom effect
           ACTIVE_ELECTRONS.push(new Electron(this.x, this.y));
-        context.globalAlpha = 0.25;
+        context.globalAlpha = 0.5;  // brighter / more highlighted
         context.fillStyle = FONT_COLOR;
         context.fillRect(this.x, this.y, CELL_SIZE, CELL_SIZE);
       }
@@ -130,7 +227,7 @@ export const ThreeHero = ({ onFaqClick, onSponsorClick }: ThreeHeroProps) => {
     tempCtx.font = `900 ${200 * scale}px "Orbitron", sans-serif`;
 
     tempCtx.fillStyle = "white";
-    tempCtx.fillText(text, tempCanvas.width / 2, tempCanvas.height / 2 + 100);
+    tempCtx.fillText(text, tempCanvas.width / 2, tempCanvas.height / 2 + 200);  // moved text lower
 
     const data = tempCtx.getImageData(
       0,
@@ -189,19 +286,19 @@ export const ThreeHero = ({ onFaqClick, onSponsorClick }: ThreeHeroProps) => {
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.outputColorSpace = THREE.SRGBColorSpace;
-    renderer.setClearColor(0x000000, 1);  // Black background but alpha enabled for layering
+    renderer.setClearColor(0x000000, 0);  // Black background but alpha enabled for layering
     renderer.toneMapping = THREE.ACESFilmicToneMapping;  // Realistic tone mapping
     renderer.toneMappingExposure = 1.0;  // Natural exposure
 
     mountRef.current.appendChild(renderer.domElement);
 
-    // Stronger ambient light for overall visibility
-    const ambient = new THREE.AmbientLight(0xffffff, 0.3);
+    // Reduced ambient light for darker/moodier look
+    const ambient = new THREE.AmbientLight(0xffffff, 0.15);
     scene.add(ambient);
 
-    // DRAMATIC WHITE SPOTLIGHT FROM ABOVE - Very bright and visible
+    // DRAMATIC WHITE SPOTLIGHT FROM ABOVE - shifted slightly right
     const mainLight = new THREE.SpotLight(0xffffff, 250, 25, Math.PI / 5, 0.4, 1.2);
-    mainLight.position.set(0, 10, 1);
+    mainLight.position.set(1.5, 10, 1);  // shifted right
     mainLight.castShadow = true;
     mainLight.shadow.mapSize.width = 2048;
     mainLight.shadow.mapSize.height = 2048;
@@ -209,51 +306,51 @@ export const ThreeHero = ({ onFaqClick, onSponsorClick }: ThreeHeroProps) => {
     mainLight.shadow.camera.far = 25;
     scene.add(mainLight);
 
-    // Target for main light
+    // Target for main light - shifted right
     const mainTarget = new THREE.Object3D();
-    mainTarget.position.set(0, 0, 0);
+    mainTarget.position.set(0.8, 0, 0);  // shifted right
     scene.add(mainTarget);
     mainLight.target = mainTarget;
 
-    // Front fill light for better visibility
-    const frontLight = new THREE.DirectionalLight(0xffffff, 1.2);
-    frontLight.position.set(0, 3, 5);
+    // Front fill light - shifted right
+    const frontLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    frontLight.position.set(1.2, 3, 5);  // shifted right + dimmer for darker feel
     scene.add(frontLight);
 
-    // Secondary white rim lights from sides - Much brighter
+    // Secondary white rim lights from sides - shifted right
     const rimLight1 = new THREE.SpotLight(0xffffff, 120, 18, Math.PI / 3, 0.5, 1.5);
-    rimLight1.position.set(-5, 7, -2);
+    rimLight1.position.set(-3.5, 7, -2);  // shifted right from -5
     rimLight1.castShadow = true;
     scene.add(rimLight1);
     const rimTarget1 = new THREE.Object3D();
-    rimTarget1.position.set(0, 0, 0);
+    rimTarget1.position.set(0.8, 0, 0);  // shifted right
     scene.add(rimTarget1);
     rimLight1.target = rimTarget1;
 
     const rimLight2 = new THREE.SpotLight(0xffffff, 120, 18, Math.PI / 3, 0.5, 1.5);
-    rimLight2.position.set(5, 7, -2);
+    rimLight2.position.set(6.5, 7, -2);  // shifted right from 5
     scene.add(rimLight2);
     const rimTarget2 = new THREE.Object3D();
-    rimTarget2.position.set(0, 0, 0);
+    rimTarget2.position.set(0.8, 0, 0);  // shifted right
     scene.add(rimTarget2);
     rimLight2.target = rimTarget2;
 
-    // FOCUSED WHITE LIGHTS ON CAR ROOF - Realistic studio lighting
+    // FOCUSED WHITE LIGHTS ON CAR ROOF - shifted right
     const roofLight1 = new THREE.SpotLight(0xffffff, 180, 12, Math.PI / 8, 0.3, 1.8);
-    roofLight1.position.set(-2, 6, 0);
+    roofLight1.position.set(-0.5, 6, 0);  // shifted right from -2
     roofLight1.castShadow = true;
     scene.add(roofLight1);
     const roofTarget1 = new THREE.Object3D();
-    roofTarget1.position.set(0, 0.3, 0);  // Target the roof area
+    roofTarget1.position.set(0.8, 0.3, 0);  // shifted right
     scene.add(roofTarget1);
     roofLight1.target = roofTarget1;
 
     const roofLight2 = new THREE.SpotLight(0xffffff, 180, 12, Math.PI / 8, 0.3, 1.8);
-    roofLight2.position.set(2, 6, 0);
+    roofLight2.position.set(3.5, 6, 0);  // shifted right from 2
     roofLight2.castShadow = true;
     scene.add(roofLight2);
     const roofTarget2 = new THREE.Object3D();
-    roofTarget2.position.set(0, 0.3, 0);  // Target the roof area
+    roofTarget2.position.set(0.8, 0.3, 0);  // shifted right
     scene.add(roofTarget2);
     roofLight2.target = roofTarget2;
 
@@ -274,10 +371,10 @@ export const ThreeHero = ({ onFaqClick, onSponsorClick }: ThreeHeroProps) => {
       MODEL_URL,
       (g) => {
         carModel = g.scene;
-        
-        // Perfect scale for viewing
-        carModel.scale.set(1.4, 1.4, 1.4);
-        
+
+        // Slightly smaller scale
+        carModel.scale.set(1.25, 1.25, 1.25);
+
         // Apply realistic materials and shadows for F1 car
         carModel.traverse((n) => {
           if ((n as THREE.Mesh).isMesh) {
@@ -299,9 +396,9 @@ export const ThreeHero = ({ onFaqClick, onSponsorClick }: ThreeHeroProps) => {
         const box = new THREE.Box3().setFromObject(carModel);
         const center = box.getCenter(new THREE.Vector3());
         carModel.position.sub(center);
-        carModel.position.y = 0.15;  // Raised up
+        carModel.position.y = 0.55;  // Moved higher toward top
         carModel.position.z = -1;     // Behind the particle text
-        
+
         scene.add(carModel);
       },
       (progress) => {
@@ -318,14 +415,14 @@ export const ThreeHero = ({ onFaqClick, onSponsorClick }: ThreeHeroProps) => {
     const animate = () => {
       requestAnimationFrame(animate);
       time += 0.01;
-      
+
       // Smooth rotation animation for the car
       if (carModel) {
         carModel.rotation.y += 0.005;
         // Add subtle floating animation at raised position
-        carModel.position.y = 0.15 + Math.sin(time * 0.8) * 0.04;
+        carModel.position.y = 0.55 + Math.sin(time * 0.8) * 0.04;  // matches new higher base
       }
-      
+
       renderer.render(scene, camera);
     };
     animate();
@@ -414,7 +511,7 @@ export const ThreeHero = ({ onFaqClick, onSponsorClick }: ThreeHeroProps) => {
         value: new Float32Array([window.innerWidth, window.innerHeight]),
       },
       raysColor: { value: new Float32Array([1.0, 0.0, 0.0]) },
-      rayPos: { value: new Float32Array([window.innerWidth / 2, -500]) },
+      rayPos: { value: new Float32Array([window.innerWidth / 2 + 120, -500]) },  // shifted right
       rayDir: { value: new Float32Array([0, 1]) },
       raysSpeed: { value: 1.2 },
       lightSpread: { value: 0.8 },
@@ -436,7 +533,7 @@ export const ThreeHero = ({ onFaqClick, onSponsorClick }: ThreeHeroProps) => {
       renderer.setSize(window.innerWidth, window.innerHeight);
       uniforms.iResolution.value.set([window.innerWidth, window.innerHeight]);
       uniforms.rayPos.value.set([
-        window.innerWidth / 2,
+        window.innerWidth / 2 + 120,  // shifted right
         -window.innerHeight * 0.6,
       ]);
     };
@@ -467,7 +564,7 @@ export const ThreeHero = ({ onFaqClick, onSponsorClick }: ThreeHeroProps) => {
   }, []);
 
   return (
-    <section className="relative h-[100svh] min-h-[100svh] w-full overflow-hidden bg-black font-sans">
+    <section className="relative h-[100svh] min-h-[100svh] w-full overflow-hidden font-sans" style={{ background: "#000000" }}>
       {/* --- LOADER OVERLAY --- */}
       <div
         className={`fixed inset-0 bg-black flex flex-col justify-center items-center z-[9999] transition-all duration-1000 ${loading ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"}`}
@@ -504,49 +601,94 @@ export const ThreeHero = ({ onFaqClick, onSponsorClick }: ThreeHeroProps) => {
       <div
         className={`transition-opacity duration-[2000ms] ${started ? "opacity-100" : "opacity-0"}`}
       >
-        {/* Nav Bar */}
-        <nav className="absolute top-0 z-50 w-full border-t-[3px] border-red-600 bg-gradient-to-b from-red-900/20 via-black/80 to-transparent px-4 py-4 sm:px-8 sm:py-5 lg:px-12 lg:py-6">
-          <div className="flex items-center justify-between gap-3">
-            <div className="text-2xl font-black italic tracking-[0.2em] text-red-600 drop-shadow-[0_0_15px_rgba(255,0,0,0.5)] sm:text-3xl">
+
+        {/* Nav Bar — Premium Glassmorphic Design */}
+        <nav className="absolute top-0 z-50 w-full px-4 pt-3 sm:px-8 sm:pt-4 lg:px-12 lg:pt-5">
+          <div
+            className="mx-auto flex items-center justify-between gap-3 rounded-2xl border border-white/[0.06] px-5 py-3 sm:px-8 sm:py-4"
+            style={{
+              background: "linear-gradient(135deg, rgba(0,0,0,0.7), rgba(20,0,0,0.6))",
+              backdropFilter: "blur(18px) saturate(1.3)",
+              WebkitBackdropFilter: "blur(18px) saturate(1.3)",
+              boxShadow: "0 8px 32px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.04), 0 0 0 1px rgba(220,38,38,0.08)",
+            }}
+          >
+            {/* Logo */}
+            <a
+              href="#hero"
+              className="relative text-2xl font-black italic tracking-[0.2em] sm:text-3xl"
+              style={{
+                background: "linear-gradient(135deg, #ff3333, #cc0000)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                filter: "drop-shadow(0 0 12px rgba(255,0,0,0.4))",
+              }}
+            >
               solutions
-            </div>
-            <div className="hidden md:flex items-center gap-8">
-              {["Events", "Sponsors", "Team", "Gallery"].map((item) => (
+              <span
+                className="absolute -bottom-1 left-0 h-[2px] w-full"
+                style={{
+                  background: "linear-gradient(90deg, transparent, rgba(255,0,0,0.5), transparent)",
+                }}
+              />
+            </a>
+
+            {/* Desktop nav links */}
+            <div className="hidden md:flex items-center gap-1 lg:gap-2">
+              {[
+                { label: "Events", href: "#circuit-roadmap" },
+                { label: "Sponsors", href: "#testimonial-garage" },
+                { label: "Team", href: "#team" },
+                { label: "Gallery", href: "#gallery" },
+              ].map((item) => (
                 <a
-                  key={item}
-                  href={`#${item.toLowerCase()}`}
-                  className="text-sm font-bold uppercase tracking-widest text-white/80 transition-all hover:-translate-y-0.5 hover:text-red-500 hover:shadow-[0_0_10px_#ff0000]"
+                  key={item.label}
+                  href={item.href}
+                  className="group relative px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.18em] text-white/70 transition-all duration-300 hover:text-white lg:px-4 lg:text-xs"
                 >
-                  {item}
+                  {item.label}
+                  <span className="absolute bottom-0 left-1/2 h-[2px] w-0 -translate-x-1/2 bg-gradient-to-r from-red-600 to-red-400 transition-all duration-300 group-hover:w-3/4" />
                 </a>
               ))}
-              <button
-                type="button"
-                onClick={onFaqClick}
-                className="rounded-full border border-zinc-500/60 bg-zinc-800/85 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.15em] text-white/90 transition hover:scale-[1.03] hover:bg-zinc-700"
-              >
-                FAQ
-              </button>
-              <button
-                type="button"
-                onClick={onSponsorClick}
-                className="rounded-full border border-red-500/60 bg-red-600/90 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.15em] text-white transition hover:scale-[1.03] hover:bg-red-500"
-              >
-                SponsorUs
-              </button>
+
+              <div className="ml-2 flex items-center gap-2 lg:ml-4">
+                <button
+                  type="button"
+                  onClick={onFaqClick}
+                  className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-1.5 text-[10px] font-bold uppercase tracking-[0.18em] text-white/80 transition-all duration-300 hover:border-white/20 hover:bg-white/[0.08] hover:text-white lg:text-xs"
+                >
+                  FAQ
+                </button>
+                <button
+                  type="button"
+                  onClick={onSponsorClick}
+                  className="rounded-full border border-red-500/40 px-4 py-1.5 text-[10px] font-bold uppercase tracking-[0.18em] text-white transition-all duration-300 lg:text-xs"
+                  style={{
+                    background: "linear-gradient(135deg, rgba(220,38,38,0.8), rgba(185,28,28,0.9))",
+                    boxShadow: "0 0 16px rgba(220,38,38,0.25), inset 0 1px 0 rgba(255,255,255,0.1)",
+                  }}
+                >
+                  Sponsor Us
+                </button>
+              </div>
             </div>
+
+            {/* Mobile buttons */}
             <div className="flex items-center gap-2 md:hidden">
               <button
                 type="button"
                 onClick={onFaqClick}
-                className="rounded-full border border-zinc-500/60 bg-zinc-800/85 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.1em] text-white/90 transition active:scale-[0.97]"
+                className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.1em] text-white/80 transition active:scale-[0.97]"
               >
                 FAQ
               </button>
               <button
                 type="button"
                 onClick={onSponsorClick}
-                className="rounded-full border border-red-500/60 bg-red-600/90 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.1em] text-white transition active:scale-[0.97]"
+                className="rounded-full border border-red-500/40 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.1em] text-white transition active:scale-[0.97]"
+                style={{
+                  background: "linear-gradient(135deg, rgba(220,38,38,0.8), rgba(185,28,28,0.9))",
+                }}
               >
                 Sponsor
               </button>
@@ -554,23 +696,37 @@ export const ThreeHero = ({ onFaqClick, onSponsorClick }: ThreeHeroProps) => {
                 type="button"
                 aria-label="Toggle navigation menu"
                 onClick={() => setMobileMenuOpen((prev) => !prev)}
-                className="rounded-md border border-zinc-700 bg-zinc-900/80 p-2 text-zinc-100 transition active:scale-[0.96]"
+                className="rounded-xl border border-white/10 bg-white/[0.04] p-2 text-zinc-100 transition active:scale-[0.96]"
               >
                 {mobileMenuOpen ? <X size={16} /> : <Menu size={16} />}
               </button>
             </div>
           </div>
+
+          {/* Mobile menu dropdown */}
           {mobileMenuOpen && (
-            <div className="mt-3 rounded-xl border border-red-500/20 bg-black/90 p-3 md:hidden">
+            <div
+              className="mx-auto mt-2 rounded-xl border border-white/[0.06] p-3 md:hidden"
+              style={{
+                background: "linear-gradient(135deg, rgba(0,0,0,0.85), rgba(20,0,0,0.8))",
+                backdropFilter: "blur(18px)",
+                WebkitBackdropFilter: "blur(18px)",
+              }}
+            >
               <div className="grid grid-cols-2 gap-2">
-                {["Events", "Sponsors", "Team", "Gallery"].map((item) => (
+                {[
+                  { label: "Events", href: "#circuit-roadmap" },
+                  { label: "Sponsors", href: "#testimonial-garage" },
+                  { label: "Team", href: "#team" },
+                  { label: "Gallery", href: "#gallery" },
+                ].map((item) => (
                   <a
-                    key={item}
-                    href={`#${item.toLowerCase()}`}
+                    key={item.label}
+                    href={item.href}
                     onClick={() => setMobileMenuOpen(false)}
-                    className="rounded-lg border border-zinc-700 bg-zinc-900/80 px-3 py-2 text-center text-xs font-bold uppercase tracking-[0.12em] text-zinc-100 transition active:scale-[0.97]"
+                    className="rounded-lg border border-white/[0.06] bg-white/[0.03] px-3 py-2.5 text-center text-xs font-bold uppercase tracking-[0.12em] text-zinc-100 transition active:scale-[0.97]"
                   >
-                    {item}
+                    {item.label}
                   </a>
                 ))}
               </div>
@@ -603,6 +759,101 @@ export const ThreeHero = ({ onFaqClick, onSponsorClick }: ThreeHeroProps) => {
           className="absolute inset-0 z-50 pointer-events-none mix-blend-screen"
         />
 
+        {/* Sparks overlay */}
+        <canvas
+          ref={sparksCanvasRef}
+          className="absolute inset-0 z-40 pointer-events-none"
+        />
+
+        {/* ===== INTERACTIVE SOLUTIONS 2K26 TITLE (mobile fallback + glitch/glow) ===== */}
+        <div
+          className="absolute inset-x-0 bottom-[8%] z-50 flex flex-col items-center pointer-events-auto md:hidden"
+          onMouseEnter={() => setMouseOnText(true)}
+          onMouseLeave={() => setMouseOnText(false)}
+        >
+          <h1
+            className="relative select-none cursor-pointer text-center"
+            style={{
+              fontFamily: '"Orbitron", sans-serif',
+              fontWeight: 900,
+              fontSize: "clamp(1.5rem, 8vw, 3rem)",
+              letterSpacing: "0.25em",
+              color: "transparent",
+              background: mouseOnText
+                ? "linear-gradient(90deg, #ff0000, #ff6644, #ff0000)"
+                : "linear-gradient(90deg, #cc0000, #ff2222, #cc0000)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              textShadow: mouseOnText
+                ? "0 0 40px rgba(255,0,0,0.9), 0 0 80px rgba(255,0,0,0.5)"
+                : "0 0 20px rgba(255,0,0,0.6)",
+              filter: glitchActive ? "blur(1px) hue-rotate(20deg)" : "none",
+              transform: glitchActive ? "translateX(2px) skewX(-1deg)" : "none",
+              transition: "text-shadow 0.3s, filter 0.1s, transform 0.1s",
+              animation: "glowPulse 2.5s ease-in-out infinite",
+            }}
+          >
+            SOLUTIONS 2K26
+          </h1>
+        </div>
+
+        {/* ===== RPM Tachometer (bottom-right) ===== */}
+        <div className="absolute bottom-6 right-6 z-50 pointer-events-none hidden sm:flex flex-col items-end gap-1">
+          <div
+            className="font-mono text-xs tracking-widest uppercase"
+            style={{ color: "rgba(255,60,60,0.5)", fontFamily: '"Orbitron", sans-serif' }}
+          >
+            RPM
+          </div>
+          <div
+            className="font-black tabular-nums"
+            style={{
+              fontFamily: '"Orbitron", sans-serif',
+              fontSize: "2rem",
+              color: rpmValue > 15000 ? "#ff2222" : "#cc3333",
+              textShadow: rpmValue > 15000
+                ? "0 0 20px rgba(255,0,0,0.8), 0 0 40px rgba(255,0,0,0.4)"
+                : "0 0 10px rgba(255,0,0,0.4)",
+              transition: "color 0.15s",
+            }}
+          >
+            {rpmValue.toLocaleString()}
+          </div>
+          {/* RPM bar */}
+          <div className="w-[120px] h-[3px] bg-red-900/30 rounded overflow-hidden">
+            <div
+              className="h-full rounded transition-all duration-75"
+              style={{
+                width: `${Math.min((rpmValue / 18000) * 100, 100)}%`,
+                background: rpmValue > 15000
+                  ? "linear-gradient(90deg, #ff4444, #ff0000)"
+                  : "linear-gradient(90deg, #880000, #cc2222)",
+                boxShadow: rpmValue > 15000 ? "0 0 8px #ff0000" : "none",
+              }}
+            />
+          </div>
+        </div>
+
+        {/* ===== Speed Lines (sides) ===== */}
+        <div className="absolute inset-0 z-[5] pointer-events-none overflow-hidden">
+          {[...Array(8)].map((_, i) => (
+            <div
+              key={`sl-${i}`}
+              className="absolute"
+              style={{
+                left: i < 4 ? `${2 + i * 3}%` : "auto",
+                right: i >= 4 ? `${2 + (i - 4) * 3}%` : "auto",
+                top: `${20 + Math.random() * 50}%`,
+                width: "1px",
+                height: `${60 + Math.random() * 100}px`,
+                background: `linear-gradient(to bottom, transparent, rgba(255,0,0,${0.05 + Math.random() * 0.1}), transparent)`,
+                animation: `speedLine ${1.5 + Math.random() * 2}s linear infinite`,
+                animationDelay: `${Math.random() * 2}s`,
+              }}
+            />
+          ))}
+        </div>
+
         {/* Bottom Light Bar Animation */}
         <div className="absolute left-1/2 top-[18%] z-30 hidden -translate-x-1/2 gap-5 sm:flex">
           {[...Array(5)].map((_, i) => (
@@ -614,6 +865,20 @@ export const ThreeHero = ({ onFaqClick, onSponsorClick }: ThreeHeroProps) => {
             </div>
           ))}
         </div>
+
+        {/* ===== KEYFRAME STYLES ===== */}
+        <style>{`
+          @keyframes glowPulse {
+            0%, 100% { filter: drop-shadow(0 0 8px rgba(255,0,0,0.5)); }
+            50% { filter: drop-shadow(0 0 25px rgba(255,0,0,0.9)) drop-shadow(0 0 50px rgba(255,50,0,0.4)); }
+          }
+          @keyframes speedLine {
+            0%   { transform: translateY(-120px); opacity: 0; }
+            20%  { opacity: 1; }
+            80%  { opacity: 1; }
+            100% { transform: translateY(120px); opacity: 0; }
+          }
+        `}</style>
       </div>
     </section>
   );
