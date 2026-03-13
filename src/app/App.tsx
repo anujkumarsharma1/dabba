@@ -75,13 +75,17 @@ function App() {
 
       <main>
         {/* Hero Section */}
-        <ThreeHero
-          onFaqClick={handleFaqClick}
-          onSponsorClick={handleSponsorClick}
-        />
+        <div id="hero">
+          <ThreeHero
+            onFaqClick={handleFaqClick}
+            onSponsorClick={handleSponsorClick}
+          />
+        </div>
 
         <Separator />
-        <EventsTimeline />
+        <div id="circuit-roadmap">
+          <EventsTimeline />
+        </div>
 
         <Separator />
         <Tracks />
@@ -90,7 +94,9 @@ function App() {
 
         <Separator />
 
-        <TestimonialSection />
+        <div id="testimonial-garage">
+          <TestimonialSection />
+        </div>
 
         {showFaq && (
           <section id="faq-section" className="scroll-mt-24">
