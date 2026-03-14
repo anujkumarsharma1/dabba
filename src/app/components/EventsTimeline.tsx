@@ -7,10 +7,10 @@ import { Trophy, X, Calendar, CheckCircle2, FastForward, Flag, MapPin } from 'lu
 // ==========================================
 const timelineEvents = [
   { id: 1, title: 'Registration', date: 'Jan 15', description: 'Start your engines! Registration begins for all events. Secure your spot on the grid.', icon: '🚩', prize: 'Early Bird Swag' },
-  { id: 2, title: 'Online Rounds', date: 'Feb 01', description: 'Preliminary simulator rounds to qualify for the finals. Show your speed.', icon: '🏎️', prize: 'Qualification' },
-  { id: 3, title: 'Screening', date: 'Feb 20', description: 'The top 50 qualifiers are announced. Did you make the cut?', icon: '📊', prize: 'Finalist Badge' },
-  { id: 4, title: 'Workshop Week', date: 'Mar 01', description: 'Tech sessions with industry experts to fine-tune your performance.', icon: '🛠️', prize: 'Certificates' },
-  { id: 5, title: 'Grand Finale', date: 'Mar 15', description: 'Three days of intense competition, networking, and glory.', icon: '🏆', prize: '$10,000 Pool' },
+  { id: 2, title: 'Tech + Gaming', date: 'April 03', description: 'Showcase your coding skills and dominate the virtual arenas in our tech and gaming tournaments.', icon: '🎮', prize: 'Tech Badges' },
+  { id: 3, title: 'Robo + EV', date: 'April 05', description: 'Witness the future of mobility and robotics as custom-built marvels battle it out on the track.', icon: '🤖', prize: 'Innovation Award' },
+  { id: 4, title: 'Open + Creative', date: 'April 07', description: 'Unleash your imagination in our open format and creative design competitions.', icon: '🎨', prize: 'Creative Honors' },
+  { id: 5, title: 'Prize Ceremony', date: 'April 08', description: 'The ultimate showdown and prize distribution for all our champions. Celebrate the glory.', icon: '🏆' },
 ];
 
 export const EventsTimeline: React.FC = () => {
