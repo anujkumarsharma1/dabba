@@ -16,41 +16,51 @@ const faqCategories = [
     icon: FileText,
     items: [
       {
-        question: "How do I join the league?",
+        question: "How do I register for Solutions 2K26?",
         answer:
-          "Simply click the 'Register Now' button on the homepage, fill out your profile, and complete the qualifying lap time submission.",
+          "You can register online through our official portal or Unstop. Simply click the 'Register' button in the navigation, choose your desired events, and complete the form. Early bird discounts are available for select events.",
       },
       {
-        question: "Is there an entry fee?",
+        question: "Is there a registration fee? Can I participate in multiple events?",
         answer:
-          "The base league is free to enter. Pro tiers and championship series may have entry fees contributing to the prize pool.",
+          "Registration fees vary depending on the specific event. Yes, you can absolutely participate in multiple events! Just ensure the schedules of your chosen events do not clash.",
+      },
+      {
+        question: "Who is eligible to participate?",
+        answer:
+          "Solutions is open to all college and university students. You must carry a valid physical student ID card from your respective institution on the days of the event.",
       },
     ],
   },
   {
-    category: "Rules & Regulations",
-    icon: Shield,
+    category: "Event Details",
+    icon: HelpCircle,
     items: [
       {
-        question: "What platforms are supported?",
+        question: "What do I need to bring on the day of the event?",
         answer:
-          "We support PC, PS5, and Xbox Series X/S. Cross-play is enabled for all major events.",
+          "Bring your college ID card, your registration receipt/QR code, and any specific equipment required for your registered events (e.g., your own laptop for coding events, robots for Robo Sumo).",
       },
       {
-        question: "Are assists allowed?",
+        question: "Will accommodation be provided for outstation participants?",
         answer:
-          "Qualifiers are strict (no assists). Lower tier leagues allow ABS and Traction Control.",
+          "Limited accommodation may be available for outstation participants upon prior request and on a first-come, first-served basis. Please contact our hospitality team for more details.",
       },
     ],
   },
   {
-    category: "Prizes",
+    category: "Prizes & Venue",
     icon: Trophy,
     items: [
       {
-        question: "How is the prize pool distributed?",
+        question: "What is the total prize pool?",
         answer:
-          "Prizes are distributed via bank transfer or crypto within 30 days of the season finale. See the Prize Pool section for breakdown.",
+          "We offer a massive total prize pool of over ₹8L+ distributed across all categories, including Tech Events, Gaming, Robotics, EV Events, and Creative competitions!",
+      },
+      {
+        question: "Where is the event located?",
+        answer:
+          "Solutions 2K26 is hosted at the Army Institute of Technology (AIT), Dighi Hills, Pune. Detailed directions and maps are available in the footer section.",
       },
     ],
   },

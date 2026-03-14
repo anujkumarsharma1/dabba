@@ -616,19 +616,35 @@ export const ThreeHero = ({ onFaqClick, onSponsorClick }: ThreeHeroProps) => {
             {/* Logo */}
             <a
               href="#hero"
-              className="relative text-2xl font-black italic tracking-[0.2em] sm:text-3xl"
+              className="relative font-black tracking-[0.2em] sm:text-3xl font-orbitron group overflow-hidden px-2 py-1"
               style={{
-                background: "linear-gradient(135deg, #ff3333, #cc0000)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                filter: "drop-shadow(0 0 12px rgba(255,0,0,0.4))",
+                textTransform: "uppercase",
               }}
             >
-              solutions
+              {/* Main Text with Gradient & Glow */}
               <span
-                className="absolute -bottom-1 left-0 h-[2px] w-full"
+                className="relative z-10 transition-all duration-300"
                 style={{
-                  background: "linear-gradient(90deg, transparent, rgba(255,0,0,0.4), transparent)",
+                  background: "linear-gradient(to bottom right, #ffffff, #ff6b6b 40%, #cc0000)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  filter: "drop-shadow(0 0 12px rgba(255,0,0,0.6))",
+                }}
+              >
+                SOLUTIONS
+              </span>
+
+              {/* Animated Shine Sweep on Hover */}
+              <span
+                className="absolute inset-0 z-20 -translate-x-[150%] skew-x-[-25deg] bg-gradient-to-r from-transparent via-white/50 to-transparent transition-all duration-700 ease-out group-hover:translate-x-[150%]"
+              />
+
+              {/* Dynamic Bottom Line */}
+              <span
+                className="absolute -bottom-1 left-0 h-[3px] w-full rounded-full transition-all duration-300 group-hover:h-[4px]"
+                style={{
+                  background: "linear-gradient(90deg, transparent, #ff0000, transparent)",
+                  boxShadow: "0 0 10px #ff0000, 0 0 20px #ff0000",
                 }}
               />
             </a>
@@ -827,16 +843,53 @@ export const ThreeHero = ({ onFaqClick, onSponsorClick }: ThreeHeroProps) => {
           ))}
         </div>
 
-        {/* Bottom Light Bar Animation */}
-        <div className="absolute left-1/2 top-[18%] z-30 hidden -translate-x-1/2 gap-5 sm:flex">
-          {[...Array(5)].map((_, i) => (
-            <div
-              key={i}
-              className="w-20 h-2.5 bg-gradient-to-b from-red-600 to-red-900 relative animate-pulse"
-            >
-              <div className="absolute top-0 left-2.5 w-14 h-2.5 bg-[#ff3333] shadow-[0_0_40px_8px_#ff0000]" />
-            </div>
-          ))}
+        {/* ===== F1 START LIGHTS (Foreground) ===== */}
+        <div className="absolute left-1/2 top-[14%] z-[60] hidden -translate-x-1/2 sm:block">
+          {/* Metallic housing bar */}
+          <div
+            className="flex items-center gap-4 rounded-xl border border-white/[0.08] px-6 py-3"
+            style={{
+              background: "linear-gradient(180deg, #1a1a1a 0%, #0d0d0d 50%, #141414 100%)",
+              boxShadow: "0 8px 32px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.05), 0 0 60px rgba(255,0,0,0.15)",
+            }}
+          >
+            {[...Array(5)].map((_, i) => (
+              <div key={i} className="relative flex flex-col items-center">
+                {/* Light housing */}
+                <div
+                  className="relative flex h-10 w-10 items-center justify-center rounded-full"
+                  style={{
+                    background: "radial-gradient(circle, #1a1a1a, #0a0a0a)",
+                    border: "2px solid #2a2a2a",
+                    boxShadow: "inset 0 2px 4px rgba(0,0,0,0.6)",
+                  }}
+                >
+                  {/* The light bulb */}
+                  <div
+                    className="h-6 w-6 rounded-full"
+                    style={{
+                      animation: `f1StartLight 4s ease-in-out infinite`,
+                      animationDelay: `${i * 0.6}s`,
+                      background: "radial-gradient(circle at 35% 35%, #330000, #1a0000)",
+                      boxShadow: "inset 0 1px 3px rgba(255,0,0,0.1)",
+                    }}
+                  />
+                </div>
+                {/* Glow halo beneath */}
+                <div
+                  className="absolute -bottom-1 h-3 w-8 rounded-full blur-md"
+                  style={{
+                    animation: `f1GlowHalo 4s ease-in-out infinite`,
+                    animationDelay: `${i * 0.6}s`,
+                    background: "transparent",
+                  }}
+                />
+              </div>
+            ))}
+          </div>
+          {/* Support bar */}
+          <div className="mx-auto h-4 w-2 bg-gradient-to-b from-zinc-800 to-zinc-900" />
+          <div className="mx-auto h-1 w-8 rounded-b bg-zinc-800 shadow-[0_4px_12px_rgba(0,0,0,0.5)]" />
         </div>
 
         {/* ===== KEYFRAME STYLES ===== */}
@@ -850,6 +903,25 @@ export const ThreeHero = ({ onFaqClick, onSponsorClick }: ThreeHeroProps) => {
             20%  { opacity: 1; }
             80%  { opacity: 1; }
             100% { transform: translateY(120px); opacity: 0; }
+          }
+          @keyframes f1StartLight {
+            0%, 10% {
+              background: radial-gradient(circle at 35% 35%, #330000, #1a0000);
+              box-shadow: inset 0 1px 3px rgba(255,0,0,0.1);
+            }
+            15%, 50% {
+              background: radial-gradient(circle at 35% 35%, #ff2222, #cc0000, #880000);
+              box-shadow: inset 0 1px 3px rgba(255,100,100,0.4), 0 0 20px rgba(255,0,0,0.8), 0 0 50px rgba(255,0,0,0.4);
+            }
+            55%, 100% {
+              background: radial-gradient(circle at 35% 35%, #330000, #1a0000);
+              box-shadow: inset 0 1px 3px rgba(255,0,0,0.1);
+            }
+          }
+          @keyframes f1GlowHalo {
+            0%, 10% { background: transparent; }
+            15%, 50% { background: rgba(255,0,0,0.5); }
+            55%, 100% { background: transparent; }
           }
         `}</style>
       </div>

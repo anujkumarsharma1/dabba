@@ -9,10 +9,12 @@ type EventPrizeGridProps = {
 };
 
 const eventPrizes = [
-  { name: "AI Challenge", amount: "$20,000", image: trophy },
-  { name: "Web Development", amount: "$15,000", image: track },
-  { name: "Blockchain Track", amount: "$12,500", image: garage },
-  { name: "Robotics Event", amount: "$10,000", image: podium },
+  { name: "Gaming", amount: "₹130K", image: trophy },
+  { name: "Tech Events", amount: "₹70K", image: track },
+  { name: "Open Events", amount: "₹80K", image: garage },
+  { name: "Robotics", amount: "₹80K", image: podium },
+  { name: "EV Events", amount: "₹50K", image: trophy },
+  { name: "Creative", amount: "₹40K", image: track },
 ];
 
 export default function EventPrizeGrid({ raceFinished }: EventPrizeGridProps) {

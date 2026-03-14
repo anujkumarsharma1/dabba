@@ -5,9 +5,10 @@ import f1Logo from "../assets/f1.svg";
 type TestimonialCardProps = {
   name: string;
   quote: string;
+  image?: string;
 };
 
-export default function TestimonialCard({ name, quote }: TestimonialCardProps) {
+export default function TestimonialCard({ name, quote, image }: TestimonialCardProps) {
   return (
     <article className="relative h-[420px] w-[280px] overflow-hidden rounded-2xl border border-red-500/50 bg-[linear-gradient(145deg,#0b0b0b,#151515,#0a0a0a)] p-5 pb-8 shadow-[0_20px_45px_rgba(0,0,0,0.6),0_0_30px_rgba(239,68,68,0.22)] before:pointer-events-none before:absolute before:inset-0 before:bg-[radial-gradient(circle_at_top,rgba(255,0,0,0.15),transparent_60%)]">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_14%,rgba(255,90,90,0.16),transparent_48%),radial-gradient(circle_at_82%_22%,rgba(255,255,255,0.08),transparent_36%)]" />
@@ -35,7 +36,7 @@ export default function TestimonialCard({ name, quote }: TestimonialCardProps) {
         <div className="mt-4 grid flex-1 grid-cols-[108px_1fr] gap-4">
           <div className="flex items-center justify-center">
             <img
-              src={manImage}
+              src={image || manImage}
               alt={`${name} portrait`}
               className="h-[200px] w-full object-contain"
               loading="lazy"
@@ -63,7 +64,7 @@ export default function TestimonialCard({ name, quote }: TestimonialCardProps) {
           </p>
           <p className="mt-1 text-sm font-bold uppercase tracking-[0.14em]">
             <span className="text-white">Solutions - </span>
-            <span className="text-red-500">2k25</span>
+            <span className="text-red-500">2k26</span>
           </p>
         </div>
 

@@ -13,9 +13,23 @@ import TestimonialSection from "../components/TestimonialSection";
 import PrizePoolExperience from "../components/prizepool/PrizePoolExperience";
 import Footer from "../components/Footer";
 
-// Neon separator component
+// F1-themed racing separator
 const Separator = () => (
-  <div className="w-full h-1 bg-gradient-to-r from-transparent via-red-600 to-transparent my-8 shadow-[0_0_15px_rgba(220,38,38,0.8)]" />
+  <div className="relative flex items-center justify-center py-6">
+    {/* Left line */}
+    <div className="h-[2px] flex-1 bg-gradient-to-r from-transparent via-red-600/60 to-red-600 shadow-[0_0_10px_rgba(220,38,38,0.4)]" />
+    {/* Checkered center */}
+    <div className="mx-4 flex gap-[2px]">
+      {[...Array(6)].map((_, i) => (
+        <div key={i} className="flex flex-col gap-[2px]">
+          <div className={`h-[6px] w-[6px] ${i % 2 === 0 ? 'bg-red-600' : 'bg-zinc-800'}`} />
+          <div className={`h-[6px] w-[6px] ${i % 2 === 0 ? 'bg-zinc-800' : 'bg-red-600'}`} />
+        </div>
+      ))}
+    </div>
+    {/* Right line */}
+    <div className="h-[2px] flex-1 bg-gradient-to-l from-transparent via-red-600/60 to-red-600 shadow-[0_0_10px_rgba(220,38,38,0.4)]" />
+  </div>
 );
 
 function App() {

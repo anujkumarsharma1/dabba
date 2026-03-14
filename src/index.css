@@ -1,8 +1,8 @@
-@import "tailwindcss";
-@import "./styles/theme.css";
-
 /* ---------------- FONT IMPORTS ---------------- */
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=Exo+2:wght@300;400;500;600;700;800;900&display=swap');
+
+@import "tailwindcss";
+@import "./styles/theme.css";
 
 @theme {
   --font-orbitron: "Orbitron", sans-serif;

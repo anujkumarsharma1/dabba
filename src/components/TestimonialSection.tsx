@@ -2,36 +2,48 @@ import { useEffect, useMemo, useState } from "react";
 import { motion } from "motion/react";
 import TestimonialCard from "./TestimonialCard";
 
+import imgAnushna from "../assets/testimonial/anushna-removebg-preview.png";
+import imgNabjit from "../assets/testimonial/nabjit-removebg-preview.png";
+import imgNisha from "../assets/testimonial/nisha-removebg-preview.png";
+import imgVatsal from "../assets/testimonial/vatsal-removebg-preview.png";
+import imgVikrant from "../assets/testimonial/vikrant-removebg-preview.png";
+
 type Testimonial = {
   name: string;
   quote: string;
+  image: string;
 };
 
 const testimonials: Testimonial[] = [
   {
-    name: "Shashank Tiwari",
+    name: "Anushna",
     quote:
       "Solution isn't just a tech fest - it's where IT students' innovative ideas come alive.",
+    image: imgAnushna,
   },
   {
-    name: "Participant 2",
+    name: "Nabjit",
     quote:
       "The atmosphere felt like race day in a paddock: high intensity, real teamwork, and endless learning.",
+    image: imgNabjit,
   },
   {
-    name: "Participant 3",
+    name: "Nisha",
     quote:
       "From brainstorming to final execution, every round pushed us to build faster and think sharper.",
+    image: imgNisha,
   },
   {
-    name: "Participant 4",
+    name: "Vatsal",
     quote:
       "Solution gave us the perfect platform to turn raw concepts into polished, real-world prototypes.",
+    image: imgVatsal,
   },
   {
-    name: "Participant 5",
+    name: "Vikrant",
     quote:
       "Competing with top minds and mentors made this one of the most energizing events of the year.",
+    image: imgVikrant,
   },
 ];
 
@@ -230,6 +242,7 @@ export default function TestimonialSection() {
                     <TestimonialCard
                       name={testimonial.name}
                       quote={testimonial.quote}
+                      image={testimonial.image}
                     />
                   </div>
                 </motion.div>
