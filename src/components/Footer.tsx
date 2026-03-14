@@ -10,7 +10,7 @@ const navLinks = [
 
 const socialLinks = [
   { label: "INSTAGRAM", href: "https://www.instagram.com/aittechnicalboard/", external: true },
-  { label: "LINKED IN", href: "https://www.linkedin.com/company/ait-technical-board/posts/?feedView=all", external: true },
+  { label: "LINKEDIN", href: "https://www.linkedin.com/company/ait-technical-board/posts/?feedView=all", external: true },
 ];
 
 const Footer = () => {

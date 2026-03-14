@@ -17,8 +17,20 @@ const faqCategories = [
     items: [
       {
         question: "How do I register for Solutions 2K26?",
-        answer:
-          "You can register online through our official portal or Unstop. Simply click the 'Register' button in the navigation, choose your desired events, and complete the form. Early bird discounts are available for select events.",
+        answer: (
+          <span>
+            You can register online through{" "}
+            <a
+              href="https://unstop.com/college-fests/solutions-2k26-army-institute-of-technology-ait-pune-433506"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-red-500 hover:text-red-400 underline transition-colors"
+            >
+              Click Here
+            </a>
+            .
+          </span>
+        ),
       },
       {
         question: "Is there a registration fee? Can I participate in multiple events?",
@@ -39,12 +51,7 @@ const faqCategories = [
       {
         question: "What do I need to bring on the day of the event?",
         answer:
-          "Bring your college ID card, your registration receipt/QR code, and any specific equipment required for your registered events (e.g., your own laptop for coding events, robots for Robo Sumo).",
-      },
-      {
-        question: "Will accommodation be provided for outstation participants?",
-        answer:
-          "Limited accommodation may be available for outstation participants upon prior request and on a first-come, first-served basis. Please contact our hospitality team for more details.",
+          "Bring your college ID card and any specific equipment required for your registered events (e.g., your own laptop for coding events, robots for Robo Sumo).",
       },
     ],
   },
@@ -60,7 +67,7 @@ const faqCategories = [
       {
         question: "Where is the event located?",
         answer:
-          "Solutions 2K26 is hosted at the Army Institute of Technology (AIT), Dighi Hills, Pune. Detailed directions and maps are available in the footer section.",
+          "Solutions offers a mix of Online and Offline events. Offline events are hosted at the Army Institute of Technology (AIT), Dighi Hills, Pune.",
       },
     ],
   },

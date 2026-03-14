@@ -7,7 +7,7 @@ type SponsorGarageProps = {
 const sponsors = [
   {
     name: "Rovu",
-    tagline: "Innovation Partner",
+    tagline: "Platform Partner",
     accent: "#ef4444",
     gradient: "from-red-600/25 via-red-900/10 to-transparent",
     borderGlow: "hover:shadow-[0_0_30px_rgba(239,68,68,0.25)]",
@@ -15,7 +15,7 @@ const sponsors = [
   },
   {
     name: "Unstop",
-    tagline: "Platform Partner",
+    tagline: "Outreach Partner",
     accent: "#3b82f6",
     gradient: "from-blue-600/25 via-blue-900/10 to-transparent",
     borderGlow: "hover:shadow-[0_0_30px_rgba(59,130,246,0.25)]",
@@ -23,7 +23,7 @@ const sponsors = [
   },
   {
     name: "Budhani Bros",
-    tagline: "Title Sponsor",
+    tagline: "Snacking Partner",
     accent: "#f59e0b",
     gradient: "from-amber-500/25 via-amber-900/10 to-transparent",
     borderGlow: "hover:shadow-[0_0_30px_rgba(245,158,11,0.25)]",

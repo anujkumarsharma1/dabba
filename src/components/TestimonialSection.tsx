@@ -22,7 +22,7 @@ const testimonials: Testimonial[] = [
     image: imgAnushna,
   },
   {
-    name: "Nabjit",
+    name: "Nabajit",
     quote:
       "The atmosphere felt like race day in a paddock: high intensity, real teamwork, and endless learning.",
     image: imgNabjit,
@@ -34,7 +34,7 @@ const testimonials: Testimonial[] = [
     image: imgNisha,
   },
   {
-    name: "Vatsal",
+    name: "Vansh",
     quote:
       "Solution gave us the perfect platform to turn raw concepts into polished, real-world prototypes.",
     image: imgVatsal,

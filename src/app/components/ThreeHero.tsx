@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useCallback } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { Renderer, Program, Triangle, Mesh } from "ogl";
@@ -26,6 +26,20 @@ export const ThreeHero = ({ onFaqClick, onSponsorClick }: ThreeHeroProps) => {
   const textRef = useRef<HTMLDivElement>(null);
   const sparksCanvasRef = useRef<HTMLCanvasElement>(null);
 
+  const [isMobileViewport, setIsMobileViewport] = useState(
+    typeof window !== "undefined" ? window.innerWidth < 640 : false,
+  );
+
+  useEffect(() => {
+    const handleViewportChange = () => {
+      setIsMobileViewport(window.innerWidth < 640);
+    };
+
+    handleViewportChange();
+    window.addEventListener("resize", handleViewportChange);
+    return () => window.removeEventListener("resize", handleViewportChange);
+  }, []);
+
   // ==========================================
   // 1. PRELOADER & START LOGIC
   // ==========================================
@@ -47,8 +61,11 @@ export const ThreeHero = ({ onFaqClick, onSponsorClick }: ThreeHeroProps) => {
 
     setTimeout(() => {
       setStarted(true);
-      // Keep particle text on larger screens to avoid performance issues on small devices.
-      if (window.innerWidth >= 768) {
+      // Keep particle text on large desktop screens only.
+      if (
+        window.innerWidth >= 1024 &&
+        window.matchMedia("(pointer: fine)").matches
+      ) {
         initParticleText("SOLUTIONS 2K26");
       }
       initSparks();
@@ -65,8 +82,14 @@ export const ThreeHero = ({ onFaqClick, onSponsorClick }: ThreeHeroProps) => {
     let direction = 1;
     const tick = () => {
       rpm += direction * (Math.random() * 400 + 100);
-      if (rpm >= 18000) { rpm = 18000; direction = -1; }
-      if (rpm <= 3000) { rpm = 3000; direction = 1; }
+      if (rpm >= 18000) {
+        rpm = 18000;
+        direction = -1;
+      }
+      if (rpm <= 3000) {
+        rpm = 3000;
+        direction = 1;
+      }
       setRpmValue(Math.round(rpm));
       setTimeout(tick, 60 + Math.random() * 80);
     };
@@ -101,7 +124,16 @@ export const ThreeHero = ({ onFaqClick, onSponsorClick }: ThreeHeroProps) => {
       canvas.height = window.innerHeight;
     });
 
-    type Spark = { x: number; y: number; vx: number; vy: number; life: number; maxLife: number; size: number; color: string };
+    type Spark = {
+      x: number;
+      y: number;
+      vx: number;
+      vy: number;
+      life: number;
+      maxLife: number;
+      size: number;
+      color: string;
+    };
     const sparks: Spark[] = [];
 
     const spawn = () => {
@@ -131,7 +163,10 @@ export const ThreeHero = ({ onFaqClick, onSponsorClick }: ThreeHeroProps) => {
         s.vy += 0.08; // gravity
         s.life++;
         const alpha = 1 - s.life / s.maxLife;
-        if (alpha <= 0) { sparks.splice(i, 1); continue; }
+        if (alpha <= 0) {
+          sparks.splice(i, 1);
+          continue;
+        }
         ctx.globalAlpha = alpha;
         ctx.fillStyle = s.color;
         ctx.shadowColor = s.color;
@@ -177,11 +212,11 @@ export const ThreeHero = ({ onFaqClick, onSponsorClick }: ThreeHeroProps) => {
       expireAt: number;
 
       constructor(x: number, y: number) {
-        this.lifeTime = 3000;  // longer life for blossom effect
+        this.lifeTime = 3000; // longer life for blossom effect
         this.expireAt = Date.now() + this.lifeTime;
         this.current = [x, y];
         this.destination = [
-          x + (Math.random() - 0.5) * 40,  // wider spread — flower blossom
+          x + (Math.random() - 0.5) * 40, // wider spread — flower blossom
           y + (Math.random() - 0.5) * 40,
         ];
       }
@@ -205,9 +240,10 @@ export const ThreeHero = ({ onFaqClick, onSponsorClick }: ThreeHeroProps) => {
         this.y = row * CELL_DISTANCE;
       }
       paint(context: CanvasRenderingContext2D) {
-        if (Math.random() > 0.96)  // more particles for dense blossom effect
+        if (Math.random() > 0.96)
+          // more particles for dense blossom effect
           ACTIVE_ELECTRONS.push(new Electron(this.x, this.y));
-        context.globalAlpha = 0.5;  // brighter / more highlighted
+        context.globalAlpha = 0.5; // brighter / more highlighted
         context.fillStyle = FONT_COLOR;
         context.fillRect(this.x, this.y, CELL_SIZE, CELL_SIZE);
       }
@@ -227,7 +263,7 @@ export const ThreeHero = ({ onFaqClick, onSponsorClick }: ThreeHeroProps) => {
     tempCtx.font = `900 ${200 * scale}px "Orbitron", sans-serif`;
 
     tempCtx.fillStyle = "white";
-    tempCtx.fillText(text, tempCanvas.width / 2, tempCanvas.height / 2 + 200);  // moved text lower
+    tempCtx.fillText(text, tempCanvas.width / 2, tempCanvas.height / 2 + 200); // moved text lower
 
     const data = tempCtx.getImageData(
       0,
@@ -269,26 +305,43 @@ export const ThreeHero = ({ onFaqClick, onSponsorClick }: ThreeHeroProps) => {
   useEffect(() => {
     if (!mountRef.current) return;
 
+    const getSceneLayout = (width: number) => {
+      const isMobile = width < 640;
+      const isTablet = width >= 640 && width < 1024;
+
+      return {
+        fov: isMobile ? 48 : isTablet ? 40 : 35,
+        cameraY: isMobile ? 1.08 : isTablet ? 0.95 : 0.8,
+        cameraZ: isMobile ? 6.25 : isTablet ? 5.5 : 5,
+        carScale: isMobile ? 0.95 : isTablet ? 1.1 : 1.25,
+        carY: isMobile ? 0.4 : isTablet ? 0.48 : 0.55,
+        carZ: isMobile ? -0.35 : isTablet ? -0.7 : -1,
+        carFloatAmplitude: isMobile ? 0.022 : 0.032,
+      };
+    };
+
+    const initialLayout = getSceneLayout(window.innerWidth);
+
     const scene = new THREE.Scene();
     // Scene will use renderer's clear color (black) for layering
     scene.fog = new THREE.Fog(0x000000, 10, 20);
 
     const camera = new THREE.PerspectiveCamera(
-      35,
+      initialLayout.fov,
       window.innerWidth / window.innerHeight,
       0.1,
       100,
     );
-    camera.position.set(0, 0.8, 5);
+    camera.position.set(0, initialLayout.cameraY, initialLayout.cameraZ);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.outputColorSpace = THREE.SRGBColorSpace;
-    renderer.setClearColor(0x000000, 0);  // Black background but alpha enabled for layering
-    renderer.toneMapping = THREE.ACESFilmicToneMapping;  // Realistic tone mapping
-    renderer.toneMappingExposure = 1.0;  // Natural exposure
+    renderer.setClearColor(0x000000, 0); // Black background but alpha enabled for layering
+    renderer.toneMapping = THREE.ACESFilmicToneMapping; // Realistic tone mapping
+    renderer.toneMappingExposure = 1.0; // Natural exposure
 
     mountRef.current.appendChild(renderer.domElement);
 
@@ -297,8 +350,15 @@ export const ThreeHero = ({ onFaqClick, onSponsorClick }: ThreeHeroProps) => {
     scene.add(ambient);
 
     // DRAMATIC WHITE SPOTLIGHT FROM ABOVE - shifted slightly right
-    const mainLight = new THREE.SpotLight(0xffffff, 250, 25, Math.PI / 5, 0.4, 1.2);
-    mainLight.position.set(1.5, 10, 1);  // shifted right
+    const mainLight = new THREE.SpotLight(
+      0xffffff,
+      250,
+      25,
+      Math.PI / 5,
+      0.4,
+      1.2,
+    );
+    mainLight.position.set(1.5, 10, 1); // shifted right
     mainLight.castShadow = true;
     mainLight.shadow.mapSize.width = 2048;
     mainLight.shadow.mapSize.height = 2048;
@@ -308,49 +368,77 @@ export const ThreeHero = ({ onFaqClick, onSponsorClick }: ThreeHeroProps) => {
 
     // Target for main light - shifted right
     const mainTarget = new THREE.Object3D();
-    mainTarget.position.set(0.8, 0, 0);  // shifted right
+    mainTarget.position.set(0.8, 0, 0); // shifted right
     scene.add(mainTarget);
     mainLight.target = mainTarget;
 
     // Front fill light - shifted right
     const frontLight = new THREE.DirectionalLight(0xffffff, 0.8);
-    frontLight.position.set(1.2, 3, 5);  // shifted right + dimmer for darker feel
+    frontLight.position.set(1.2, 3, 5); // shifted right + dimmer for darker feel
     scene.add(frontLight);
 
     // Secondary white rim lights from sides - shifted right
-    const rimLight1 = new THREE.SpotLight(0xffffff, 120, 18, Math.PI / 3, 0.5, 1.5);
-    rimLight1.position.set(-3.5, 7, -2);  // shifted right from -5
+    const rimLight1 = new THREE.SpotLight(
+      0xffffff,
+      120,
+      18,
+      Math.PI / 3,
+      0.5,
+      1.5,
+    );
+    rimLight1.position.set(-3.5, 7, -2); // shifted right from -5
     rimLight1.castShadow = true;
     scene.add(rimLight1);
     const rimTarget1 = new THREE.Object3D();
-    rimTarget1.position.set(0.8, 0, 0);  // shifted right
+    rimTarget1.position.set(0.8, 0, 0); // shifted right
     scene.add(rimTarget1);
     rimLight1.target = rimTarget1;
 
-    const rimLight2 = new THREE.SpotLight(0xffffff, 120, 18, Math.PI / 3, 0.5, 1.5);
-    rimLight2.position.set(6.5, 7, -2);  // shifted right from 5
+    const rimLight2 = new THREE.SpotLight(
+      0xffffff,
+      120,
+      18,
+      Math.PI / 3,
+      0.5,
+      1.5,
+    );
+    rimLight2.position.set(6.5, 7, -2); // shifted right from 5
     scene.add(rimLight2);
     const rimTarget2 = new THREE.Object3D();
-    rimTarget2.position.set(0.8, 0, 0);  // shifted right
+    rimTarget2.position.set(0.8, 0, 0); // shifted right
     scene.add(rimTarget2);
     rimLight2.target = rimTarget2;
 
     // FOCUSED WHITE LIGHTS ON CAR ROOF - shifted right
-    const roofLight1 = new THREE.SpotLight(0xffffff, 180, 12, Math.PI / 8, 0.3, 1.8);
-    roofLight1.position.set(-0.5, 6, 0);  // shifted right from -2
+    const roofLight1 = new THREE.SpotLight(
+      0xffffff,
+      180,
+      12,
+      Math.PI / 8,
+      0.3,
+      1.8,
+    );
+    roofLight1.position.set(-0.5, 6, 0); // shifted right from -2
     roofLight1.castShadow = true;
     scene.add(roofLight1);
     const roofTarget1 = new THREE.Object3D();
-    roofTarget1.position.set(0.8, 0.3, 0);  // shifted right
+    roofTarget1.position.set(0.8, 0.3, 0); // shifted right
     scene.add(roofTarget1);
     roofLight1.target = roofTarget1;
 
-    const roofLight2 = new THREE.SpotLight(0xffffff, 180, 12, Math.PI / 8, 0.3, 1.8);
-    roofLight2.position.set(3.5, 6, 0);  // shifted right from 2
+    const roofLight2 = new THREE.SpotLight(
+      0xffffff,
+      180,
+      12,
+      Math.PI / 8,
+      0.3,
+      1.8,
+    );
+    roofLight2.position.set(3.5, 6, 0); // shifted right from 2
     roofLight2.castShadow = true;
     scene.add(roofLight2);
     const roofTarget2 = new THREE.Object3D();
-    roofTarget2.position.set(0.8, 0.3, 0);  // shifted right
+    roofTarget2.position.set(0.8, 0.3, 0); // shifted right
     scene.add(roofTarget2);
     roofLight2.target = roofTarget2;
 
@@ -366,14 +454,40 @@ export const ThreeHero = ({ onFaqClick, onSponsorClick }: ThreeHeroProps) => {
     // LOAD ORACLE RED BULL F1 CAR MODEL
     const loader = new GLTFLoader();
     let carModel: THREE.Group;
+    let centeredCarX = 0;
+    let carFloatBaseY = initialLayout.carY;
+    let carFloatAmplitude = initialLayout.carFloatAmplitude;
+
+    const applyResponsiveSceneLayout = (width: number, height: number) => {
+      const layout = getSceneLayout(width);
+      camera.aspect = width / height;
+      camera.fov = layout.fov;
+      camera.position.set(0, layout.cameraY, layout.cameraZ);
+      camera.updateProjectionMatrix();
+      renderer.setSize(width, height);
+
+      carFloatBaseY = layout.carY;
+      carFloatAmplitude = layout.carFloatAmplitude;
+
+      if (carModel) {
+        carModel.scale.set(layout.carScale, layout.carScale, layout.carScale);
+        carModel.position.x = centeredCarX;
+        carModel.position.y = layout.carY;
+        carModel.position.z = layout.carZ;
+      }
+    };
 
     loader.load(
       MODEL_URL,
       (g) => {
         carModel = g.scene;
 
-        // Slightly smaller scale
-        carModel.scale.set(1.25, 1.25, 1.25);
+        // Scale is applied through viewport-aware layout below.
+        carModel.scale.set(
+          initialLayout.carScale,
+          initialLayout.carScale,
+          initialLayout.carScale,
+        );
 
         // Apply realistic materials and shadows for F1 car
         carModel.traverse((n) => {
@@ -384,8 +498,8 @@ export const ThreeHero = ({ onFaqClick, onSponsorClick }: ThreeHeroProps) => {
             if (mesh.material) {
               const material = mesh.material as THREE.MeshStandardMaterial;
               // Realistic F1 car material properties - balanced for realism
-              material.roughness = 0.35;     // Not too shiny, realistic paint/carbon
-              material.metalness = 0.7;      // Mixed metallic and painted surfaces
+              material.roughness = 0.35; // Not too shiny, realistic paint/carbon
+              material.metalness = 0.7; // Mixed metallic and painted surfaces
               material.envMapIntensity = 1.0; // Natural reflections
               material.needsUpdate = true;
             }
@@ -396,14 +510,16 @@ export const ThreeHero = ({ onFaqClick, onSponsorClick }: ThreeHeroProps) => {
         const box = new THREE.Box3().setFromObject(carModel);
         const center = box.getCenter(new THREE.Vector3());
         carModel.position.sub(center);
-        carModel.position.y = 0.55;  // Moved higher toward top
-        carModel.position.z = -1;     // Behind the particle text
+        centeredCarX = carModel.position.x;
+        applyResponsiveSceneLayout(window.innerWidth, window.innerHeight);
 
         scene.add(carModel);
       },
       (progress) => {
         // Optional: track loading progress
-        console.log(`Loading model: ${(progress.loaded / progress.total) * 100}%`);
+        console.log(
+          `Loading model: ${(progress.loaded / progress.total) * 100}%`,
+        );
       },
       (error) => {
         console.error("Error loading Red Bull F1 car model:", error);
@@ -419,8 +535,9 @@ export const ThreeHero = ({ onFaqClick, onSponsorClick }: ThreeHeroProps) => {
       // Smooth rotation animation for the car
       if (carModel) {
         carModel.rotation.y += 0.005;
-        // Add subtle floating animation at raised position
-        carModel.position.y = 0.55 + Math.sin(time * 0.8) * 0.04;  // matches new higher base
+        // Add subtle floating animation with viewport-aware amplitude.
+        carModel.position.y =
+          carFloatBaseY + Math.sin(time * 0.8) * carFloatAmplitude;
       }
 
       renderer.render(scene, camera);
@@ -428,11 +545,11 @@ export const ThreeHero = ({ onFaqClick, onSponsorClick }: ThreeHeroProps) => {
     animate();
 
     const handleResize = () => {
-      camera.aspect = window.innerWidth / window.innerHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
+      applyResponsiveSceneLayout(window.innerWidth, window.innerHeight);
     };
     window.addEventListener("resize", handleResize);
+
+    applyResponsiveSceneLayout(window.innerWidth, window.innerHeight);
 
     return () => {
       window.removeEventListener("resize", handleResize);
@@ -511,7 +628,12 @@ export const ThreeHero = ({ onFaqClick, onSponsorClick }: ThreeHeroProps) => {
         value: new Float32Array([window.innerWidth, window.innerHeight]),
       },
       raysColor: { value: new Float32Array([1.0, 0.0, 0.0]) },
-      rayPos: { value: new Float32Array([window.innerWidth / 2 + 120, -500]) },  // shifted right
+      rayPos: {
+        value: new Float32Array([
+          window.innerWidth / 2 + (window.innerWidth < 640 ? 40 : 120),
+          -500,
+        ]),
+      },
       rayDir: { value: new Float32Array([0, 1]) },
       raysSpeed: { value: 1.2 },
       lightSpread: { value: 0.8 },
@@ -533,7 +655,7 @@ export const ThreeHero = ({ onFaqClick, onSponsorClick }: ThreeHeroProps) => {
       renderer.setSize(window.innerWidth, window.innerHeight);
       uniforms.iResolution.value.set([window.innerWidth, window.innerHeight]);
       uniforms.rayPos.value.set([
-        window.innerWidth / 2 + 120,  // shifted right
+        window.innerWidth / 2 + (window.innerWidth < 640 ? 40 : 120),
         -window.innerHeight * 0.6,
       ]);
     };
@@ -564,7 +686,10 @@ export const ThreeHero = ({ onFaqClick, onSponsorClick }: ThreeHeroProps) => {
   }, []);
 
   return (
-    <section className="relative h-[100svh] min-h-[100svh] w-full overflow-hidden font-sans" style={{ background: "#000000" }}>
+    <section
+      className="relative h-[100dvh] min-h-[100dvh] w-full overflow-hidden font-sans"
+      style={{ background: "#000000" }}
+    >
       {/* --- LOADER OVERLAY --- */}
       <div
         className={`fixed inset-0 bg-black flex flex-col justify-center items-center z-[9999] transition-all duration-1000 ${loading ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"}`}
@@ -573,7 +698,7 @@ export const ThreeHero = ({ onFaqClick, onSponsorClick }: ThreeHeroProps) => {
           {progress < 100 ? (
             <>
               {/* UPDATED: Loading Text */}
-              <div className="mb-5 text-3xl font-black italic tracking-[5px] text-red-600 drop-shadow-[0_0_20px_rgba(255,0,0,0.6)] sm:text-5xl sm:tracking-[12px]">
+              <div className="mb-5 px-4 text-center text-[8vw] leading-tight font-black italic tracking-[2px] text-red-600 drop-shadow-[0_0_20px_rgba(255,0,0,0.6)] sm:text-5xl sm:tracking-[12px] whitespace-normal sm:whitespace-nowrap">
                 SOLUTIONS 2K26
               </div>
               <div className="relative mx-auto h-0.5 w-[250px] overflow-hidden bg-red-900/30 sm:w-[300px]">
@@ -601,7 +726,6 @@ export const ThreeHero = ({ onFaqClick, onSponsorClick }: ThreeHeroProps) => {
       <div
         className={`transition-opacity duration-[2000ms] ${started ? "opacity-100" : "opacity-0"}`}
       >
-
         {/* Nav Bar — Light & Transparent */}
         <nav className="absolute top-0 z-50 w-full px-4 pt-3 sm:px-8 sm:pt-4 lg:px-12 lg:pt-5">
           <div
@@ -625,7 +749,8 @@ export const ThreeHero = ({ onFaqClick, onSponsorClick }: ThreeHeroProps) => {
               <span
                 className="relative z-10 transition-all duration-300"
                 style={{
-                  background: "linear-gradient(to bottom right, #ffffff, #ff6b6b 40%, #cc0000)",
+                  background:
+                    "linear-gradient(to bottom right, #ffffff, #ff6b6b 40%, #cc0000)",
                   WebkitBackgroundClip: "text",
                   WebkitTextFillColor: "transparent",
                   filter: "drop-shadow(0 0 12px rgba(255,0,0,0.6))",
@@ -635,15 +760,14 @@ export const ThreeHero = ({ onFaqClick, onSponsorClick }: ThreeHeroProps) => {
               </span>
 
               {/* Animated Shine Sweep on Hover */}
-              <span
-                className="absolute inset-0 z-20 -translate-x-[150%] skew-x-[-25deg] bg-gradient-to-r from-transparent via-white/50 to-transparent transition-all duration-700 ease-out group-hover:translate-x-[150%]"
-              />
+              <span className="absolute inset-0 z-20 -translate-x-[150%] skew-x-[-25deg] bg-gradient-to-r from-transparent via-white/50 to-transparent transition-all duration-700 ease-out group-hover:translate-x-[150%]" />
 
               {/* Dynamic Bottom Line */}
               <span
                 className="absolute -bottom-1 left-0 h-[3px] w-full rounded-full transition-all duration-300 group-hover:h-[4px]"
                 style={{
-                  background: "linear-gradient(90deg, transparent, #ff0000, transparent)",
+                  background:
+                    "linear-gradient(90deg, transparent, #ff0000, transparent)",
                   boxShadow: "0 0 10px #ff0000, 0 0 20px #ff0000",
                 }}
               />
@@ -745,7 +869,7 @@ export const ThreeHero = ({ onFaqClick, onSponsorClick }: ThreeHeroProps) => {
         <div ref={mountRef} className="absolute inset-0 z-20" />
         <div
           ref={textRef}
-          className="absolute inset-0 z-50 pointer-events-none mix-blend-screen"
+          className="absolute inset-0 z-50 pointer-events-none mix-blend-screen hidden lg:block"
         />
 
         {/* Sparks overlay */}
@@ -756,17 +880,20 @@ export const ThreeHero = ({ onFaqClick, onSponsorClick }: ThreeHeroProps) => {
 
         {/* ===== INTERACTIVE SOLUTIONS 2K26 TITLE (mobile fallback + glitch/glow) ===== */}
         <div
-          className="absolute inset-x-0 bottom-[8%] z-50 flex flex-col items-center pointer-events-auto md:hidden"
+          className="absolute inset-x-0 bottom-[9svh] z-50 flex flex-col items-center px-4 pointer-events-auto lg:hidden"
           onMouseEnter={() => setMouseOnText(true)}
           onMouseLeave={() => setMouseOnText(false)}
         >
           <h1
-            className="relative select-none cursor-pointer text-center"
+            className="relative select-none cursor-pointer text-center w-full min-w-0"
             style={{
               fontFamily: '"Orbitron", sans-serif',
               fontWeight: 900,
-              fontSize: "clamp(1.5rem, 8vw, 3rem)",
-              letterSpacing: "0.25em",
+              fontSize: "clamp(2rem, 10vw, 4rem)",
+              letterSpacing: isMobileViewport ? "0.02em" : "0.14em",
+              lineHeight: 1.1,
+              maxWidth: "100%",
+              wordWrap: "break-word",
               color: "transparent",
               background: mouseOnText
                 ? "linear-gradient(90deg, #ff0000, #ff6644, #ff0000)"
@@ -790,7 +917,10 @@ export const ThreeHero = ({ onFaqClick, onSponsorClick }: ThreeHeroProps) => {
         <div className="absolute bottom-6 right-6 z-50 pointer-events-none hidden sm:flex flex-col items-end gap-1">
           <div
             className="font-mono text-xs tracking-widest uppercase"
-            style={{ color: "rgba(255,60,60,0.5)", fontFamily: '"Orbitron", sans-serif' }}
+            style={{
+              color: "rgba(255,60,60,0.5)",
+              fontFamily: '"Orbitron", sans-serif',
+            }}
           >
             RPM
           </div>
@@ -800,9 +930,10 @@ export const ThreeHero = ({ onFaqClick, onSponsorClick }: ThreeHeroProps) => {
               fontFamily: '"Orbitron", sans-serif',
               fontSize: "2rem",
               color: rpmValue > 15000 ? "#ff2222" : "#cc3333",
-              textShadow: rpmValue > 15000
-                ? "0 0 20px rgba(255,0,0,0.8), 0 0 40px rgba(255,0,0,0.4)"
-                : "0 0 10px rgba(255,0,0,0.4)",
+              textShadow:
+                rpmValue > 15000
+                  ? "0 0 20px rgba(255,0,0,0.8), 0 0 40px rgba(255,0,0,0.4)"
+                  : "0 0 10px rgba(255,0,0,0.4)",
               transition: "color 0.15s",
             }}
           >
@@ -814,9 +945,10 @@ export const ThreeHero = ({ onFaqClick, onSponsorClick }: ThreeHeroProps) => {
               className="h-full rounded transition-all duration-75"
               style={{
                 width: `${Math.min((rpmValue / 18000) * 100, 100)}%`,
-                background: rpmValue > 15000
-                  ? "linear-gradient(90deg, #ff4444, #ff0000)"
-                  : "linear-gradient(90deg, #880000, #cc2222)",
+                background:
+                  rpmValue > 15000
+                    ? "linear-gradient(90deg, #ff4444, #ff0000)"
+                    : "linear-gradient(90deg, #880000, #cc2222)",
                 boxShadow: rpmValue > 15000 ? "0 0 8px #ff0000" : "none",
               }}
             />
@@ -825,7 +957,7 @@ export const ThreeHero = ({ onFaqClick, onSponsorClick }: ThreeHeroProps) => {
 
         {/* ===== Speed Lines (sides) ===== */}
         <div className="absolute inset-0 z-[5] pointer-events-none overflow-hidden">
-          {[...Array(8)].map((_, i) => (
+          {[...Array(isMobileViewport ? 4 : 8)].map((_, i) => (
             <div
               key={`sl-${i}`}
               className="absolute"
@@ -844,13 +976,15 @@ export const ThreeHero = ({ onFaqClick, onSponsorClick }: ThreeHeroProps) => {
         </div>
 
         {/* ===== F1 START LIGHTS (Foreground) ===== */}
-        <div className="absolute left-1/2 top-[14%] z-[60] hidden -translate-x-1/2 sm:block">
+        <div className="absolute left-1/2 top-[22%] sm:top-[14%] z-[60] -translate-x-1/2 scale-[0.6] sm:scale-100">
           {/* Metallic housing bar */}
           <div
             className="flex items-center gap-4 rounded-xl border border-white/[0.08] px-6 py-3"
             style={{
-              background: "linear-gradient(180deg, #1a1a1a 0%, #0d0d0d 50%, #141414 100%)",
-              boxShadow: "0 8px 32px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.05), 0 0 60px rgba(255,0,0,0.15)",
+              background:
+                "linear-gradient(180deg, #1a1a1a 0%, #0d0d0d 50%, #141414 100%)",
+              boxShadow:
+                "0 8px 32px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.05), 0 0 60px rgba(255,0,0,0.15)",
             }}
           >
             {[...Array(5)].map((_, i) => (
@@ -870,7 +1004,8 @@ export const ThreeHero = ({ onFaqClick, onSponsorClick }: ThreeHeroProps) => {
                     style={{
                       animation: `f1StartLight 4s ease-in-out infinite`,
                       animationDelay: `${i * 0.6}s`,
-                      background: "radial-gradient(circle at 35% 35%, #330000, #1a0000)",
+                      background:
+                        "radial-gradient(circle at 35% 35%, #330000, #1a0000)",
                       boxShadow: "inset 0 1px 3px rgba(255,0,0,0.1)",
                     }}
                   />

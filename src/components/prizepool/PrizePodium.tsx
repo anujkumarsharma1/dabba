@@ -17,6 +17,7 @@ const podiumSlots = [
     borderAccent: "border-blue-500/30",
     glowColor: "rgba(59,130,246,0.3)",
     heightClass: "sm:mt-10",
+    mobileOrder: "order-2 sm:order-1",
   },
   {
     title: "Robo + EV",
@@ -28,6 +29,7 @@ const podiumSlots = [
     borderAccent: "border-red-500/30",
     glowColor: "rgba(239,68,68,0.35)",
     heightClass: "sm:mt-0",
+    mobileOrder: "order-1 sm:order-2",
   },
   {
     title: "Open + Creative",
@@ -39,6 +41,7 @@ const podiumSlots = [
     borderAccent: "border-amber-500/30",
     glowColor: "rgba(245,158,11,0.3)",
     heightClass: "sm:mt-14",
+    mobileOrder: "order-3",
   },
 ];
 
@@ -58,14 +61,14 @@ const cardVariants = {
 
 export default function PrizePodium({ raceFinished }: PrizePodiumProps) {
   return (
-    <motion.section className="mt-8">
+    <motion.section className="mt-6 sm:mt-8">
       {/* Section header */}
       <div className="mx-auto max-w-5xl">
-        <div className="mb-10 text-center">
-          <p className="text-[10px] font-bold uppercase tracking-[0.35em] text-red-400 sm:text-xs">
+        <div className="mb-8 text-center sm:mb-10">
+          <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-red-400 sm:text-xs sm:tracking-[0.35em]">
             Final Standings
           </p>
-          <h3 className="mt-2 font-rajdhani text-3xl font-black uppercase tracking-tight text-white sm:text-4xl">
+          <h3 className="mt-2 font-rajdhani text-2xl font-black uppercase tracking-tight text-white sm:text-4xl">
             Prize <span className="text-red-500">Podium</span>
           </h3>
           <div className="mx-auto mt-3 h-1 w-16 bg-red-600 skew-x-[-20deg]" />
@@ -73,7 +76,7 @@ export default function PrizePodium({ raceFinished }: PrizePodiumProps) {
 
         {/* Podium grid */}
         <div
-          className="grid grid-cols-1 gap-6 sm:grid-cols-3 sm:items-start"
+          className="grid grid-cols-1 gap-4 sm:grid-cols-3 sm:items-start sm:gap-6"
           style={{ perspective: "1200px" }}
         >
           {podiumSlots.map((slot, index) => {
@@ -94,19 +97,19 @@ export default function PrizePodium({ raceFinished }: PrizePodiumProps) {
                   scale: 1.04,
                   transition: { duration: 0.35, ease: "easeOut" },
                 }}
-                className={`group relative overflow-hidden rounded-2xl border ${slot.borderAccent} bg-[linear-gradient(145deg,#0e1015,#080a0e)] p-[1px] shadow-[0_12px_40px_rgba(0,0,0,0.5)] transition-shadow duration-500 ${slot.heightClass}`}
+                className={`group relative overflow-hidden rounded-xl border ${slot.borderAccent} bg-[linear-gradient(145deg,#0e1015,#080a0e)] p-[1px] shadow-[0_12px_40px_rgba(0,0,0,0.5)] transition-shadow duration-500 sm:rounded-2xl ${slot.heightClass} ${slot.mobileOrder}`}
                 style={{ transformStyle: "preserve-3d" }}
               >
                 {/* Animated border glow on hover */}
                 <div
-                  className="absolute -inset-[1px] rounded-2xl opacity-0 blur-[2px] transition-opacity duration-500 group-hover:opacity-100"
+                  className="absolute -inset-[1px] rounded-xl opacity-0 blur-[2px] transition-opacity duration-500 group-hover:opacity-100 sm:rounded-2xl"
                   style={{
                     background: `linear-gradient(135deg, ${slot.accent}55, transparent 40%, transparent 60%, ${slot.accent}55)`,
                   }}
                 />
 
                 {/* Inner card */}
-                <div className="relative overflow-hidden rounded-2xl bg-[linear-gradient(145deg,#0c0e13,#0a0b0f)] p-6 sm:p-7">
+                <div className="relative overflow-hidden rounded-xl bg-[linear-gradient(145deg,#0c0e13,#0a0b0f)] p-5 sm:rounded-2xl sm:p-7">
                   {/* Background podium image */}
                   <img
                     src={podium}
@@ -152,7 +155,7 @@ export default function PrizePodium({ raceFinished }: PrizePodiumProps) {
                     {/* Position badge + Icon */}
                     <div className="flex items-center justify-between">
                       <div
-                        className="flex h-10 w-10 items-center justify-center rounded-xl border backdrop-blur-sm"
+                        className="flex h-9 w-9 items-center justify-center rounded-lg border backdrop-blur-sm sm:h-10 sm:w-10 sm:rounded-xl"
                         style={{
                           borderColor: `${slot.accent}44`,
                           backgroundColor: `${slot.accent}15`,
@@ -160,12 +163,12 @@ export default function PrizePodium({ raceFinished }: PrizePodiumProps) {
                         }}
                       >
                         <Icon
-                          className="h-5 w-5"
+                          className="h-4 w-4 sm:h-5 sm:w-5"
                           style={{ color: slot.accent }}
                         />
                       </div>
                       <span
-                        className="font-rajdhani text-xs font-bold uppercase tracking-[0.2em]"
+                        className="font-rajdhani text-[11px] font-bold uppercase tracking-[0.15em] sm:text-xs sm:tracking-[0.2em]"
                         style={{ color: slot.accent }}
                       >
                         {slot.position}
@@ -173,7 +176,7 @@ export default function PrizePodium({ raceFinished }: PrizePodiumProps) {
                     </div>
 
                     {/* Title */}
-                    <h4 className="mt-5 font-rajdhani text-lg font-bold uppercase tracking-wider text-white sm:text-xl">
+                    <h4 className="mt-4 font-rajdhani text-base font-bold uppercase tracking-[0.08em] text-white sm:mt-5 sm:text-xl sm:tracking-wider">
                       {slot.title}
                     </h4>
 
@@ -191,7 +194,7 @@ export default function PrizePodium({ raceFinished }: PrizePodiumProps) {
 
                     {/* Amount */}
                     <motion.p
-                      className="mt-4 font-rajdhani text-4xl font-black tracking-tight text-white sm:text-5xl"
+                      className="mt-3 font-rajdhani text-3xl font-black tracking-tight text-white sm:mt-4 sm:text-5xl"
                       style={{
                         textShadow: `0 0 25px ${slot.glowColor}`,
                       }}
@@ -200,7 +203,7 @@ export default function PrizePodium({ raceFinished }: PrizePodiumProps) {
                     </motion.p>
 
                     {/* Bottom label */}
-                    <p className="mt-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-zinc-500">
+                    <p className="mt-2 text-[10px] font-semibold uppercase tracking-[0.12em] text-zinc-500 sm:tracking-[0.18em]">
                       Combined Prize Pool
                     </p>
                   </div>
